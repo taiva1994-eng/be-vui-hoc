@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bé Yêu - Bé Vui Học</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#F3F9FF">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/questions.js"></script>
+  <script src="/spaced_repetition.js"></script>
+  <script src="/lessons.js"></script>
+</head>
+<body class="kid-screen">
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Thanh trạng thái & Hành động trên cùng -->
+  <header class="app-header">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <!-- Trạng thái kết nối -->
+      <div id="conn-status" class="status-badge disconnected" style="padding: 4px 8px;">
+        <span class="status-dot"></span>
+        <span id="conn-text" style="display: none;">Đang nối...</span>
+      </div>
+
+      <!-- Hồ Sơ Của Bé (Tên & Avatar) -->
+      <div class="kid-profile-badge" onclick="openProfileModal()" title="Chạm để đổi tên và con vật đại diện">
+        <span id="header-kid-avatar" style="font-size: 18px;">🦁</span>
+        <span id="header-kid-name">Bé Bo</span>
+        <span style="font-size: 11px; color: #64748B;">✏️</span>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Nút Chọn Bài Học -->
+      <button class="lesson-btn-pill" onclick="openLessonLibraryModal()" title="Thư Viện Bài Học">
+        <span>📚</span> <span>Bài Học</span>
+      </button>
+
+      <!-- Nút Khu Vườn Trí Nhớ -->
+      <button class="garden-btn-pill" onclick="openGardenModal()" title="Khu Vườn Trí Nhớ">
+        <span>🌳</span> <span id="garden-count">Vườn (3)</span>
+      </button>
+
+      <!-- Nút Bé Khám Phá Mới -->
+      <button class="discovery-btn-pill" onclick="openDiscoveryModal()" title="Bé nạp bài học mới">
+        <span>🎙️</span> <span>Bé Kể</span>
+      </button>
+
+      <!-- Khóa phụ huynh -->
+      <button id="lock-btn" style="background: none; border: none; font-size: 22px; cursor: pointer; margin-left: 2px;">
+        🔒
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= CHẾ ĐỘ 1: THẺ HỌC FLASHCARD (ẢNH CHỤP THẬT) ================= -->
+  <section id="flashcard-view" class="flashcard-wrapper" style="display: none;">
+    <div class="flashcard-progress-header">
+      <div>
+        <strong id="fc-lesson-title" style="color: #4F46E5; font-size: 15px;">Bài Học: Màu Sắc</strong>
+        <div id="fc-step-text" style="font-size: 12px; color: #64748B;">Thẻ 1 / 4</div>
+      </div>
+      <div class="dots-indicator" id="fc-dots-box"></div>
+    </div>
+
+    <div class="flashcard-main-card" id="fc-card-body">
+      <img id="fc-photo-display" class="flashcard-photo-hero" src="" alt="Ảnh chụp thật" style="display: none;">
+      
+      <div class="flashcard-icon-bubble" id="fc-icon-bubble" style="display: flex;">
+        <span id="fc-icon-display">🍓</span>
+      </div>
+
+      <h2 class="flashcard-title" id="fc-name-display">Màu Đỏ</h2>
+      <div class="flashcard-example-pill" id="fc-example-pill">
+        <span id="fc-example-icon" style="font-size: 20px;">🍓</span>
+        <span id="fc-example-text">Quả dâu tây tươi mọng màu đỏ</span>
+      </div>
+      <button class="speaker-btn" onclick="replayCardAudio()" title="Nghe lại giọng đọc" style="margin-top: 4px;">
+        🔊
+      </button>
+    </div>
+
+    <div class="flashcard-nav-row">
+      <button id="fc-prev-btn" class="flashcard-nav-btn prev" onclick="prevFlashcard()">
+        ⬅️ Thẻ Trước
+      </button>
+      <button id="fc-next-btn" class="flashcard-nav-btn next" onclick="nextFlashcard()">
+        Tiếp Theo ➡️
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= CHẾ ĐỘ 2: BỘ CÂU ĐỐ TRẮC NGHIỆM ================= -->
+  <section id="quiz-view" style="display: flex; flex-direction: column; flex: 1;">
+    <div id="spaced-banner" class="stage-progress-bar" style="display: none;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 24px;" id="banner-stage-icon">🌱</span>
+        <div>
+          <div style="font-size: 13px; font-weight: 800; color: #1E293B;" id="banner-stage-name">Ôn Bài Ngắt Quãng</div>
+          <div style="font-size: 11px; color: #64748B;" id="banner-stage-desc">Bé chọn đúng cây sẽ lớn lên nhé!</div>
+        </div>
+      </div>
+      <button onclick="exitSpacedReview()" style="padding: 4px 10px; border-radius: 10px; border: 1px solid #CBD5E1; background: #F8FAFC; font-size: 12px; font-weight: bold;">Tạm dừng</button>
+    </div>
+
+    <div id="lesson-quiz-banner" style="display: none; justify-content: space-between; align-items: center; margin: 8px 20px 0; background: #EEF2FF; padding: 8px 16px; border-radius: 14px; border: 1px solid #C7D2FE;">
+      <span style="font-size: 13px; font-weight: 800; color: #3730A3;" id="lq-progress-text">Thử thách: Câu 1 / 4</span>
+      <button onclick="returnToLessonCards()" style="border: none; background: white; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; color: #4F46E5;">📖 Xem lại thẻ học</button>
+    </div>
+
+    <div class="kid-question-box">
+      <div id="q-title" class="kid-question-title">Đang chờ câu hỏi từ Bố Mẹ... 🎈</div>
+      <button id="speaker-btn" class="speaker-btn" title="Nghe lại câu hỏi">🔊</button>
+    </div>
+
+    <main class="options-container" id="options-box"></main>
+    <div id="feedback-box" class="kid-feedback"></div>
+  </section>
+
+  <!-- ================= MODAL ĐỔI TÊN & AVATAR CỦA BÉ ================= -->
+  <div id="profile-modal" class="discovery-modal-overlay" style="display: none; z-index: 10002;">
+    <div class="discovery-card" style="max-width: 380px;">
+      <h3 style="color: #1E3A8A; font-size: 20px; margin-bottom: 6px;">🦁 Đặt Tên Cho Bé</h3>
+      <p style="font-size: 13px; color: #64748B; margin-bottom: 12px;">Để Bố Mẹ và các bạn cùng lớp nhận ra bé nhé:</p>
+
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: left;">Tên của bé:</label>
+        <input id="profile-name-input" type="text" value="Bé Bo" 
+          style="width: 100%; padding: 10px 14px; border: 2px solid #CBD5E1; border-radius: 12px; font-size: 16px; font-weight: bold; color: #1E293B; outline: none;">
+      </div>
+
+      <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 6px; text-align: left;">Chọn con vật đại diện:</label>
+      <div class="avatar-selector-grid" id="avatar-grid">
+        <button class="avatar-choice-btn" onclick="selectAvatar('🦁', this)">🦁</button>
+        <button class="avatar-choice-btn" onclick="selectAvatar('🐰', this)">🐰</button>
+        <button class="avatar-choice-btn" onclick="selectAvatar('🐼', this)">🐼</button>
+        <button class="avatar-choice-btn" onclick="selectAvatar('🦊', this)">🦊</button>
+        <button class="avatar-choice-btn" onclick="selectAvatar('🐶', this)">🐶</button>
+        <button class="avatar-choice-btn" onclick="selectAvatar('🐱', this)">🐱</button>
+        <button class="avatar-choice-btn" onclick="selectAvatar('🐻', this)">🐻</button>
+        <button class="avatar-choice-btn" onclick="selectAvatar('🐯', this)">🐯</button>
+        <button class="avatar-choice-btn" onclick="selectAvatar('🐵', this)">🐵</button>
+        <button class="avatar-choice-btn" onclick="selectAvatar('🦄', this)">🦄</button>
+        <button class="avatar-choice-btn" onclick="selectAvatar('🦖', this)">🦖</button>
+        <button class="avatar-choice-btn" onclick="selectAvatar('🐣', this)">🐣</button>
+      </div>
+
+      <button onclick="saveKidProfile()" style="width: 100%; padding: 12px; background: #4F46E5; color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);">
+        Lưu Tên Bé
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL LỄ HOÀN THÀNH BÀI HỌC ================= -->
+  <div id="ceremony-modal" class="discovery-modal-overlay" style="display: none;">
+    <div class="discovery-card" style="max-width: 380px;">
+      <div style="font-size: 56px; animation: float 2s infinite ease-in-out;">🎓</div>
+      <h2 style="font-size: 24px; font-weight: 900; color: #1E3A8A; margin: 8px 0 4px;">Hoan Hô Bé Yêu!</h2>
+      <p style="font-size: 15px; color: #475569; margin-bottom: 16px;" id="ceremony-subtext">
+        Bé đã xem xong tất cả các thẻ rồi! Cùng chơi trò thử thách đố vui nhé!
+      </p>
+      <button onclick="startLessonQuizzes()" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #4F46E5, #3730A3); color: white; border: none; border-radius: 18px; font-size: 18px; font-weight: 900; box-shadow: 0 6px 18px rgba(79, 70, 229, 0.4); cursor: pointer;">
+        🎮 Bắt Đầu Đố Vui Ngay!
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL THƯ VIỆN BÀI HỌC ================= -->
+  <div id="lesson-library-modal" class="discovery-modal-overlay" style="display: none;">
+    <div class="discovery-card" style="max-width: 440px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2 style="font-size: 20px; font-weight: 800; color: #1E3A8A; display: flex; align-items: center; gap: 6px;">
+          <span>📚</span> Chọn Bài Học Cho Bé
+        </h2>
+        <button onclick="closeLessonLibraryModal()" style="border: none; background: #F1F5F9; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer;">✕</button>
+      </div>
+      <p style="font-size: 13px; color: #64748B; text-align: left; margin-bottom: 14px;">Bé xem các thẻ học ảnh thật trước, sau đó làm câu đố vui:</p>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;" id="lesson-library-list"></div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL GÓC KHÁM PHÁ CỦA BÉ ================= -->
+  <div id="discovery-modal" class="discovery-modal-overlay" style="display: none;">
+    <div class="discovery-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h2 style="font-size: 20px; font-weight: 800; color: #1E3A8A; display: flex; align-items: center; gap: 6px;">
+          <span>🎙️</span> Bé Khám Phá Điều Mới
+        </h2>
+        <button onclick="closeDiscoveryModal()" style="border: none; background: #F1F5F9; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer;">✕</button>
+      </div>
+
+      <label class="camera-snap-btn" style="cursor: pointer; width: 100%;">
+        <span>📸 Chụp Ảnh Đồ Vật Thật Của Bé</span>
+        <input type="file" accept="image/*" capture="environment" id="kid-camera-input" style="display: none;" onchange="handleKidPhotoSnap(event)">
+      </label>
+
+      <div id="kid-photo-preview-box" style="display: none; align-items: center; gap: 10px; margin: 8px 0; background: #ECFDF5; padding: 8px 12px; border-radius: 12px;">
+        <img id="kid-photo-preview" class="photo-preview-mini" src="">
+        <span style="font-size: 13px; font-weight: bold; color: #065F46;">Đã chụp ảnh thật thành công! 📸</span>
+      </div>
+
+      <div style="background: #F1F5F9; padding: 12px; border-radius: 16px; margin: 10px 0;">
+        <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 6px;">
+          🎙️ Chạm vào đây và bấm <strong>Micro trên bàn phím</strong> để nói:
+        </label>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <input id="discovery-input" type="text" placeholder="Ví dụ: Con voi, Quả chuối..." 
+            style="flex: 1; padding: 10px 14px; border: 2px solid #CBD5E1; border-radius: 12px; font-size: 16px; font-weight: bold; color: #1E293B; outline: none;"
+            oninput="handleDiscoveryInput(this.value)">
+          <div id="current-badge-icon" style="font-size: 32px; width: 44px; height: 44px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+            🌟
+          </div>
+        </div>
+      </div>
+
+      <div id="web-mic-section" style="margin: 6px 0;">
+        <button id="mic-btn" class="mic-hero-btn" onclick="toggleVoiceRecording()" title="Bấm để nói">
+          🎙️
+        </button>
+        <div id="speech-tip" style="font-size: 12px; color: #64748B;">Bấm Micro to ở trên hoặc bấm Micro trên bàn phím</div>
+      </div>
+
+      <div style="margin-top: 10px;">
+        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 8px;">
+          <button class="tab-btn active" onclick="switchDiscoveryCategory('animal', this)">🦁 Động vật</button>
+          <button class="tab-btn" onclick="switchDiscoveryCategory('fruit', this)">🍎 Hoa quả</button>
+          <button class="tab-btn" onclick="switchDiscoveryCategory('vehicle', this)">🚗 Xe cộ</button>
+          <button class="tab-btn" onclick="switchDiscoveryCategory('nature', this)">☀️ Thiên nhiên</button>
+        </div>
+        <div class="quick-pick-grid" id="discovery-palette"></div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 14px;">
+        <button onclick="closeDiscoveryModal()" style="flex: 1; padding: 12px; border: 1px solid #CBD5E1; background: white; border-radius: 14px; font-weight: bold; color: #64748B;">Hủy</button>
+        <button id="save-discovery-btn" onclick="saveKidDiscovery()" style="flex: 1.5; padding: 12px; border: none; background: #059669; color: white; border-radius: 14px; font-weight: bold; font-size: 15px;">🌱 Trồng Vào Vườn</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL KHU VƯỜN TRÍ NHỚ ================= -->
+  <div id="garden-modal" class="discovery-modal-overlay" style="display: none;">
+    <div class="discovery-card" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h2 style="font-size: 20px; font-weight: 800; color: #1E3A8A; display: flex; align-items: center; gap: 6px;">
+          <span>🌳</span> Khu Vườn Trí Nhớ Của Bé
+        </h2>
+        <button onclick="closeGardenModal()" style="border: none; background: #F1F5F9; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer;">✕</button>
+      </div>
+      <p style="font-size: 13px; color: #64748B; text-align: left;">Các bài học bé khám phá sẽ lớn dần: 🌱 Hạt mầm $\rightarrow$ 🌿 Cây con $\rightarrow$ 🌸 Nở hoa $\rightarrow$ 🍎 Trĩu quả khi bé ôn tập định kỳ!</p>
+
+      <div style="display: flex; justify-content: space-around; background: #F8FAFC; padding: 10px; border-radius: 16px; margin: 12px 0;">
+        <div>🌱 <strong id="stat-seed">0</strong> Mầm</div>
+        <div>🌿 <strong id="stat-sprout">0</strong> Cây</div>
+        <div>🌸 <strong id="stat-flower">0</strong> Hoa</div>
+        <div>🍎 <strong id="stat-fruit">0</strong> Quả</div>
+      </div>
+
+      <div id="due-box" style="background: linear-gradient(135deg, #FEF3C7, #FDE68A); padding: 14px; border-radius: 18px; margin-bottom: 14px; text-align: center;">
+        <div style="font-size: 28px; margin-bottom: 4px;">🎁</div>
+        <div style="font-weight: 800; color: #92400E; font-size: 15px;" id="due-title">Hôm nay có bài cần tưới nước!</div>
+        <div style="font-size: 12px; color: #B45309; margin-bottom: 10px;" id="due-subtitle">Bé cùng ôn lại để cây ra hoa nhé</div>
+        <button onclick="startSpacedReview()" style="padding: 10px 20px; background: #D97706; color: white; border: none; border-radius: 20px; font-weight: 800; font-size: 14px; box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3);">
+          🚀 Ôn Bài Ngay (Tưới Cây)
+        </button>
+      </div>
+
+      <div class="garden-card-grid" id="garden-list-box"></div>
+    </div>
+  </div>
+
+  <!-- Dialog Khóa phụ huynh -->
+  <div id="parental-gate-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 24px; padding: 24px; max-width: 320px; width: 90%; text-align: center;">
+      <h3 style="margin-bottom: 8px;">🔒 Khóa Phụ Huynh</h3>
+      <p style="font-size: 14px; color: #64748B; margin-bottom: 16px;">Bé nhờ Bố/Mẹ giải câu đố để thoát nhé:</p>
+      <div id="math-challenge" style="font-size: 28px; font-weight: bold; color: #4F46E5; margin-bottom: 20px;"></div>
+      <div id="math-options" style="display: flex; justify-content: space-around; margin-bottom: 16px;"></div>
+      <button onclick="closeParentalGate()" style="background: none; border: none; color: #94A3B8; font-size: 14px;">Quay lại học tiếp</button>
+    </div>
+  </div>
+
+  <script>
+    // 1. Quản lý Hồ Sơ Của Bé (Tên & Avatar riêng cho từng máy)
+    let kidProfile = {
+      id: localStorage.getItem('be_vui_hoc_kid_id') || ('kid_' + Date.now() + '_' + Math.floor(Math.random()*1000)),
+      name: localStorage.getItem('be_vui_hoc_kid_name') || 'Bé Bo',
+      avatar: localStorage.getItem('be_vui_hoc_kid_avatar') || '🦁'
+    };
+    localStorage.setItem('be_vui_hoc_kid_id', kidProfile.id);
+
+    function initKidProfileUI() {
+      document.getElementById('header-kid-avatar').innerText = kidProfile.avatar;
+      document.getElementById('header-kid-name').innerText = kidProfile.name;
+    }
+    initKidProfileUI();
+
+    function openProfileModal() {
+      document.getElementById('profile-name-input').value = kidProfile.name;
+      document.querySelectorAll('.avatar-choice-btn').forEach(btn => {
+        if (btn.innerText === kidProfile.avatar) btn.classList.add('selected');
+        else btn.classList.remove('selected');
+      });
+      document.getElementById('profile-modal').style.display = 'flex';
+    }
+
+    function selectAvatar(em, btn) {
+      kidProfile.avatar = em;
+      document.querySelectorAll('.avatar-choice-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+
+    function saveKidProfile() {
+      const name = document.getElementById('profile-name-input').value.trim() || 'Bé Yêu';
+      kidProfile.name = name;
+      localStorage.setItem('be_vui_hoc_kid_name', kidProfile.name);
+      localStorage.setItem('be_vui_hoc_kid_avatar', kidProfile.avatar);
+      initKidProfileUI();
+      document.getElementById('profile-modal').style.display = 'none';
+
+      // Báo danh sách cho máy Bố Mẹ
+      sendWS({
+        type: 'kid_join',
+        payload: {
+          id: kidProfile.id,
+          name: kidProfile.name,
+          avatar: kidProfile.avatar
+        }
+      });
+    }
+
+    // 2. Web Audio Synthesizer
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playChime(isSuccess) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (isSuccess) {
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+        osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.8);
+      } else {
+        osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(250, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      }
+    }
+
+    // 3. Text-To-Speech tiếng Việt
+    function speakVietnamese(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'vi-VN';
+      utter.rate = 0.85;
+      utter.pitch = 1.1;
+      window.speechSynthesis.speak(utter);
+    }
+
+    // 4. Hiệu ứng Confetti
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function fireConfetti() {
+      particles = [];
+      const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#40C4FF', '#69F0AE', '#FFD740', '#FF6E40'];
+      for (let i = 0; i < 70; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 12 + 4;
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.4,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 6,
+          size: Math.random() * 10 + 6,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * Math.PI * 2,
+          vRotation: (Math.random() - 0.5) * 0.2,
+          life: 1.0
+        });
+      }
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      for (let p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.3;
+        p.rotation += p.vRotation;
+        p.life -= 0.012;
+
+        if (p.life > 0) {
+          alive = true;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0, p.life);
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+          ctx.restore();
+        }
+      }
+      if (alive) requestAnimationFrame(animateConfetti);
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function spawnReaction(emoji) {
+      for (let i = 0; i < 6; i++) {
+        setTimeout(() => {
+          const el = document.createElement('div');
+          el.className = 'floating-emoji';
+          el.innerText = emoji;
+          el.style.left = (Math.random() * 80 + 10) + 'vw';
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 2000);
+        }, i * 100);
+      }
+    }
+
+    // 5. QUẢN LÝ BÀI HỌC CÓ CẤU TRÚC (THẺ HỌC ẢNH THẬT -> CÂU ĐỐ)
+    let activeLesson = null;
+    let currentCardIndex = 0;
+    let isLessonQuizMode = false;
+    let lessonQuizQueue = [];
+    let currentLessonQuizIndex = 0;
+
+    const flashcardView = document.getElementById('flashcard-view');
+    const quizView = document.getElementById('quiz-view');
+    const lessonQuizBanner = document.getElementById('lesson-quiz-banner');
+    const lqProgressText = document.getElementById('lq-progress-text');
+
+    function startLesson(lesson) {
+      activeLesson = lesson;
+      currentCardIndex = 0;
+      isLessonQuizMode = false;
+
+      flashcardView.style.display = 'flex';
+      quizView.style.display = 'none';
+
+      document.getElementById('fc-lesson-title').innerText = lesson.title;
+      renderCurrentFlashcard();
+
+      sendWS({
+        type: 'lesson_progress',
+        payload: {
+          kidId: kidProfile.id,
+          kidName: kidProfile.name,
+          kidAvatar: kidProfile.avatar,
+          lessonId: lesson.id,
+          lessonTitle: lesson.title,
+          status: 'studying_cards',
+          cardIndex: currentCardIndex,
+          totalCards: lesson.cards.length
+        }
+      });
+    }
+
+    function renderCurrentFlashcard() {
+      const card = activeLesson.cards[currentCardIndex];
+      const total = activeLesson.cards.length;
+
+      document.getElementById('fc-step-text').innerText = `Thẻ ${currentCardIndex + 1} / ${total}`;
+
+      const dotsBox = document.getElementById('fc-dots-box');
+      dotsBox.innerHTML = '';
+      for (let i = 0; i < total; i++) {
+        const dot = document.createElement('div');
+        dot.className = `dot-step ${i === currentCardIndex ? 'active' : (i < currentCardIndex ? 'done' : '')}`;
+        dotsBox.appendChild(dot);
+      }
+
+      const cardBody = document.getElementById('fc-card-body');
+      cardBody.style.background = card.bgLight || '#FFFFFF';
+      cardBody.style.borderColor = card.themeColor || '#E2E8F0';
+
+      const photoEl = document.getElementById('fc-photo-display');
+      const bubbleEl = document.getElementById('fc-icon-bubble');
+
+      if (card.photo) {
+        photoEl.src = card.photo;
+        photoEl.style.display = 'block';
+        bubbleEl.style.display = 'none';
+      } else {
+        photoEl.style.display = 'none';
+        bubbleEl.style.display = 'flex';
+        bubbleEl.style.background = card.themeColor ? `${card.themeColor}22` : '#F1F5F9';
+        document.getElementById('fc-icon-display').innerText = card.icon;
+      }
+
+      document.getElementById('fc-name-display').innerText = card.name;
+      document.getElementById('fc-name-display').style.color = card.themeColor || '#1E293B';
+
+      document.getElementById('fc-example-icon').innerText = card.exampleIcon || '🌟';
+      document.getElementById('fc-example-text').innerText = card.exampleText || '';
+
+      const prevBtn = document.getElementById('fc-prev-btn');
+      const nextBtn = document.getElementById('fc-next-btn');
+
+      prevBtn.style.visibility = currentCardIndex > 0 ? 'visible' : 'hidden';
+
+      if (currentCardIndex === total - 1) {
+        nextBtn.className = 'flashcard-nav-btn finish';
+        nextBtn.innerHTML = '🎉 Hoàn Thành Bài Học';
+      } else {
+        nextBtn.className = 'flashcard-nav-btn next';
+        nextBtn.innerHTML = 'Tiếp Theo ➡️';
+      }
+
+      speakVietnamese(card.audioPrompt || card.name);
+    }
+
+    function replayCardAudio() {
+      if (activeLesson) {
+        const card = activeLesson.cards[currentCardIndex];
+        speakVietnamese(card.audioPrompt || card.name);
+      }
+    }
+
+    function prevFlashcard() {
+      if (currentCardIndex > 0) {
+        currentCardIndex--;
+        renderCurrentFlashcard();
+      }
+    }
+
+    function nextFlashcard() {
+      const total = activeLesson.cards.length;
+      if (currentCardIndex < total - 1) {
+        currentCardIndex++;
+        renderCurrentFlashcard();
+
+        sendWS({
+          type: 'lesson_progress',
+          payload: {
+            kidId: kidProfile.id,
+            kidName: kidProfile.name,
+            kidAvatar: kidProfile.avatar,
+            lessonId: activeLesson.id,
+            lessonTitle: activeLesson.title,
+            status: 'studying_cards',
+            cardIndex: currentCardIndex,
+            totalCards: total
+          }
+        });
+      } else {
+        openCeremonyModal();
+      }
+    }
+
+    function openCeremonyModal() {
+      const modal = document.getElementById('ceremony-modal');
+      document.getElementById('ceremony-subtext').innerText = 
+        `Bé đã học xong tất cả ${activeLesson.cards.length} thẻ của "${activeLesson.title}" rồi! Cùng chơi trò thử thách đố vui nhé!`;
+      modal.style.display = 'flex';
+      fireConfetti();
+      playChime(true);
+      speakVietnamese(`Hoan hô bé đã học xong bài! Bây giờ cùng tham gia thử thách câu đố nhé!`);
+    }
+
+    function startLessonQuizzes() {
+      document.getElementById('ceremony-modal').style.display = 'none';
+      flashcardView.style.display = 'none';
+      quizView.style.display = 'flex';
+
+      isLessonQuizMode = true;
+      lessonQuizQueue = activeLesson.quizzes || lessonManager.generateQuizzesFromCards(activeLesson.cards);
+      currentLessonQuizIndex = 0;
+
+      lessonQuizBanner.style.display = 'flex';
+      renderCurrentLessonQuiz();
+
+      sendWS({
+        type: 'lesson_progress',
+        payload: {
+          kidId: kidProfile.id,
+          kidName: kidProfile.name,
+          kidAvatar: kidProfile.avatar,
+          lessonId: activeLesson.id,
+          lessonTitle: activeLesson.title,
+          status: 'taking_quizzes',
+          quizIndex: 0,
+          totalQuizzes: lessonQuizQueue.length
+        }
+      });
+    }
+
+    function renderCurrentLessonQuiz() {
+      const q = lessonQuizQueue[currentLessonQuizIndex];
+      lqProgressText.innerText = `Thử thách: Câu ${currentLessonQuizIndex + 1} / ${lessonQuizQueue.length}`;
+      displayQuestion(q, false);
+    }
+
+    function returnToLessonCards() {
+      if (activeLesson) {
+        flashcardView.style.display = 'flex';
+        quizView.style.display = 'none';
+        lessonQuizBanner.style.display = 'none';
+        isLessonQuizMode = false;
+        renderCurrentFlashcard();
+      }
+    }
+
+    // 6. Thư viện bài học
+    function openLessonLibraryModal() {
+      const modal = document.getElementById('lesson-library-modal');
+      const list = document.getElementById('lesson-library-list');
+      list.innerHTML = '';
+
+      const all = lessonManager.getAllLessons();
+      all.forEach(l => {
+        const item = document.createElement('div');
+        item.style.cssText = 'background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 16px; padding: 14px; text-align: left; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s;';
+        item.innerHTML = `
+          <div>
+            <strong style="font-size: 16px; color: #1E3A8A; display: block; margin-bottom: 2px;">${l.title}</strong>
+            <span style="font-size: 12px; color: #64748B;">${l.desc}</span>
+            <div style="margin-top: 6px;">
+              <span style="background: #E0E7FF; color: #3730A3; font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 8px;">${l.badge || (l.cards.length + ' thẻ')}</span>
+            </div>
+          </div>
+          <span style="font-size: 24px; color: #4F46E5;">▶️</span>
+        `;
+        item.onclick = () => {
+          closeLessonLibraryModal();
+          startLesson(l);
+        };
+        list.appendChild(item);
+      });
+
+      modal.style.display = 'flex';
+    }
+
+    function closeLessonLibraryModal() {
+      document.getElementById('lesson-library-modal').style.display = 'none';
+    }
+
+    // 7. Quản lý trạng thái câu hỏi & Render Thẻ Lựa Chọn Ảnh Thật
+    let currentQuestion = null;
+    let answered = false;
+    let startTime = null;
+    let isSpacedReviewMode = false;
+    let dueReviewQueue = [];
+    let currentReviewIndex = 0;
+
+    const qTitle = document.getElementById('q-title');
+    const speakerBtn = document.getElementById('speaker-btn');
+    const optionsBox = document.getElementById('options-box');
+    const feedbackBox = document.getElementById('feedback-box');
+    const connStatus = document.getElementById('conn-status');
+    const connText = document.getElementById('conn-text');
+    const spacedBanner = document.getElementById('spaced-banner');
+
+    speakerBtn.onclick = () => {
+      if (currentQuestion) speakVietnamese(currentQuestion.audioPrompt || currentQuestion.title);
+    };
+
+    function displayQuestion(q, isReview = false) {
+      currentQuestion = q;
+      answered = false;
+      startTime = Date.now();
+
+      qTitle.innerText = q.title;
+      feedbackBox.className = 'kid-feedback';
+      feedbackBox.innerText = '';
+
+      if (isReview && q.stageInfo) {
+        spacedBanner.style.display = 'flex';
+        document.getElementById('banner-stage-icon').innerText = q.stageInfo.icon;
+        document.getElementById('banner-stage-name').innerText = `Ôn tập: ${q.stageInfo.name} (${currentReviewIndex + 1}/${dueReviewQueue.length})`;
+        document.getElementById('banner-stage-desc').innerText = q.stageInfo.desc;
+      } else {
+        spacedBanner.style.display = 'none';
+      }
+
+      optionsBox.innerHTML = '';
+      q.options.forEach((opt, idx) => {
+        const card = document.createElement('div');
+        card.className = 'option-card';
+        card.id = `opt-${idx}`;
+
+        let visualHtml = `<div class="option-icon">${opt.icon}</div>`;
+        if (opt.photo) {
+          visualHtml = `<img src="${opt.photo}" class="option-photo-thumb" alt="${opt.label}">`;
+        }
+
+        card.innerHTML = `
+          ${visualHtml}
+          <div class="option-label">${opt.label}</div>
+        `;
+        card.onclick = () => handleAnswer(idx);
+        optionsBox.appendChild(card);
+      });
+
+      speakVietnamese(q.audioPrompt || q.title);
+    }
+
+    function handleAnswer(index) {
+      if (answered && index === currentQuestion.correctIndex) return;
+
+      const isCorrect = (index === currentQuestion.correctIndex);
+      const timeSpent = Math.max(1, Math.round((Date.now() - startTime) / 1000));
+      const card = document.getElementById(`opt-${index}`);
+
+      if (isCorrect) {
+        answered = true;
+        card.className = 'option-card correct';
+        playChime(true);
+        fireConfetti();
+        spawnReaction('⭐');
+        feedbackBox.className = 'kid-feedback correct';
+        feedbackBox.innerText = '🎉 Hoan hô bé! Bé chọn đúng rồi!';
+        speakVietnamese('Hoan hô bé! Bé giỏi quá!');
+
+        if (isLessonQuizMode) {
+          const activeCard = activeLesson.cards[currentLessonQuizIndex];
+          if (activeCard) {
+            memoryGarden.addLesson(activeCard.name, activeCard.exampleText, activeCard.icon, activeCard.photo);
+            updateGardenUI();
+          }
+
+          setTimeout(() => {
+            currentLessonQuizIndex++;
+            if (currentLessonQuizIndex < lessonQuizQueue.length) {
+              renderCurrentLessonQuiz();
+            } else {
+              lessonQuizBanner.style.display = 'none';
+              isLessonQuizMode = false;
+              alert(`🌟 Tuyệt vời! Bé đã xuất sắc hoàn thành toàn bộ bài học "${activeLesson.title}"! Các hạt mầm đã được gieo vào Khu Vườn Trí Nhớ!`);
+              speakVietnamese(`Tuyệt vời! Bé đã hoàn thành xuất sắc bài học rồi!`);
+
+              sendWS({
+                type: 'lesson_progress',
+                payload: {
+                  kidId: kidProfile.id,
+                  kidName: kidProfile.name,
+                  kidAvatar: kidProfile.avatar,
+                  lessonId: activeLesson.id,
+                  lessonTitle: activeLesson.title,
+                  status: 'completed'
+                }
+              });
+            }
+          }, 2400);
+        } else if (currentQuestion.lessonId) {
+          const updatedLesson = memoryGarden.recordReviewResult(currentQuestion.lessonId, true);
+          updateGardenUI();
+          sendWS({
+            type: 'spaced_progress',
+            payload: {
+              kidId: kidProfile.id,
+              kidName: kidProfile.name,
+              kidAvatar: kidProfile.avatar,
+              lessonId: currentQuestion.lessonId,
+              isCorrect: true,
+              level: updatedLesson.level
+            }
+          });
+
+          if (isSpacedReviewMode) {
+            setTimeout(() => {
+              currentReviewIndex++;
+              if (currentReviewIndex < dueReviewQueue.length) {
+                const nextQ = memoryGarden.generateQuiz(dueReviewQueue[currentReviewIndex], SAMPLE_QUESTIONS);
+                displayQuestion(nextQ, true);
+              } else {
+                exitSpacedReview();
+                alert('🌸 Hoan hô bé đã tưới xong tất cả các cây trong vườn hôm nay!');
+                speakVietnamese('Chúc mừng bé đã chăm sóc xong khu vườn trí nhớ hôm nay!');
+              }
+            }, 2500);
+          }
+        }
+      } else {
+        card.className = 'option-card wrong';
+        playChime(false);
+        feedbackBox.className = 'kid-feedback wrong';
+        feedbackBox.innerText = '💪 Bé thử chọn lại xem sao nhé!';
+        speakVietnamese('Chưa đúng rồi, bé thử chọn lại xem sao nhé!');
+
+        if (currentQuestion.lessonId) {
+          memoryGarden.recordReviewResult(currentQuestion.lessonId, false);
+          updateGardenUI();
+          sendWS({
+            type: 'spaced_progress',
+            payload: {
+              kidId: kidProfile.id,
+              kidName: kidProfile.name,
+              kidAvatar: kidProfile.avatar,
+              lessonId: currentQuestion.lessonId,
+              isCorrect: false,
+              level: 1
+            }
+          });
+        }
+      }
+
+      // Gửi kết quả về máy Bố Mẹ kèm Tên & Avatar của bé
+      sendWS({
+        type: 'kid_answered',
+        payload: {
+          kidId: kidProfile.id,
+          kidName: kidProfile.name,
+          kidAvatar: kidProfile.avatar,
+          selectedIndex: index,
+          isCorrect: isCorrect,
+          timeSpent: timeSpent
+        }
+      });
+    }
+
+    // 8. Kết nối WebSocket
+    let ws = null;
+    function connectWS() {
+      const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(`${protocol}//${location.host}`);
+
+      ws.onopen = () => {
+        connStatus.className = 'status-badge connected';
+        // Báo danh sách bé tham gia ngay khi mở máy
+        sendWS({
+          type: 'kid_join',
+          payload: {
+            id: kidProfile.id,
+            name: kidProfile.name,
+            avatar: kidProfile.avatar
+          }
+        });
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const packet = JSON.parse(event.data);
+          if (packet.type === 'push_lesson') {
+            startLesson(packet.payload);
+          } else if (packet.type === 'push_question') {
+            flashcardView.style.display = 'none';
+            quizView.style.display = 'flex';
+            isLessonQuizMode = false;
+            lessonQuizBanner.style.display = 'none';
+            displayQuestion(packet.payload, false);
+          } else if (packet.type === 'remote_hint') {
+            if (!packet.payload || !packet.payload.kidId || packet.payload.kidId === 'all' || packet.payload.kidId === kidProfile.id) {
+              const correctCard = document.getElementById(`opt-${currentQuestion.correctIndex}`);
+              if (correctCard) {
+                correctCard.classList.add('hint');
+                speakVietnamese(currentQuestion.hint || 'Bé nhìn kỹ các hình xem nào!');
+              }
+            }
+          } else if (packet.type === 'remote_cheer') {
+            if (!packet.payload || !packet.payload.kidId || packet.payload.kidId === 'all' || packet.payload.kidId === kidProfile.id) {
+              const emojis = { heart: '❤️', star: '⭐', clap: '👏', balloon: '🎈' };
+              spawnReaction(emojis[packet.payload.type] || '❤️');
+            }
+          } else if (packet.type === 'reward_kid') {
+            // Nhận thưởng riêng từ Bố Mẹ
+            if (packet.payload.kidId === kidProfile.id || packet.payload.kidId === 'all') {
+              fireConfetti();
+              playChime(true);
+              spawnReaction(packet.payload.rewardEmoji || '⭐');
+              speakVietnamese(`Bố mẹ vừa thưởng cho ${kidProfile.name} một ngôi sao lấp lánh!`);
+            }
+          } else if (packet.type === 'parent_ping') {
+            // Khi máy Bố Mẹ mở hoặc bấm Tìm máy bé, tự động báo danh lại
+            sendWS({
+              type: 'kid_join',
+              payload: {
+                id: kidProfile.id,
+                name: kidProfile.name,
+                avatar: kidProfile.avatar
+              }
+            });
+          } else if (packet.type === 'sync_lesson') {
+            memoryGarden.lessons = packet.payload;
+            memoryGarden.saveLessons();
+            updateGardenUI();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      };
+
+      ws.onclose = () => {
+        connStatus.className = 'status-badge disconnected';
+        setTimeout(connectWS, 2000);
+      };
+    }
+
+    function sendWS(data) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(data));
+      }
+    }
+
+    // 9. GÓC KHÁM PHÁ CỦA BÉ
+    let selectedEmoji = '🌟';
+    let kidSnappedPhoto = null;
+    let recognition = null;
+    let isRecording = false;
+
+    const PRESET_TOPICS = {
+      animal: [
+        { name: 'Chú Cún', icon: '🐶' }, { name: 'Bạn Mèo', icon: '🐱' },
+        { name: 'Bạn Voi', icon: '🐘' }, { name: 'Bạn Thỏ', icon: '🐰' },
+        { name: 'Bạn Hổ', icon: '🐯' }, { name: 'Gấu Bông', icon: '🐻' },
+        { name: 'Bạn Khỉ', icon: '🐵' }, { name: 'Vịt Vàng', icon: '🦆' }
+      ],
+      fruit: [
+        { name: 'Quả Táo', icon: '🍎' }, { name: 'Quả Chuối', icon: '🍌' },
+        { name: 'Dưa Hấu', icon: '🍉' }, { name: 'Dâu Tây', icon: '🍓' },
+        { name: 'Quả Cam', icon: '🍊' }, { name: 'Quả Nho', icon: '🍇' }
+      ],
+      vehicle: [
+        { name: 'Xe Ô Tô', icon: '🚗' }, { name: 'Xe Buýt', icon: '🚌' },
+        { name: 'Cứu Hỏa', icon: '🚒' }, { name: 'Máy Bay', icon: '✈️' }
+      ],
+      nature: [
+        { name: 'Mặt Trời', icon: '☀️' }, { name: 'Mặt Trăng', icon: '🌙' },
+        { name: 'Ngôi Sao', icon: '⭐' }, { name: 'Cầu Vồng', icon: '🌈' }
+      ]
+    };
+
+    function openDiscoveryModal() {
+      document.getElementById('discovery-modal').style.display = 'flex';
+      document.getElementById('discovery-input').value = '';
+      selectedEmoji = '🌟';
+      kidSnappedPhoto = null;
+      document.getElementById('kid-photo-preview-box').style.display = 'none';
+      document.getElementById('current-badge-icon').innerText = selectedEmoji;
+      switchDiscoveryCategory('animal');
+      setTimeout(() => {
+        document.getElementById('discovery-input').focus();
+      }, 300);
+    }
+
+    function closeDiscoveryModal() {
+      if (isRecording && recognition) recognition.stop();
+      document.getElementById('discovery-modal').style.display = 'none';
+    }
+
+    function handleKidPhotoSnap(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 400;
+          let w = img.width;
+          let h = img.height;
+          if (w > h && w > maxDim) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else if (h > maxDim) {
+            w = Math.round((w * maxDim) / h);
+            h = maxDim;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          kidSnappedPhoto = canvas.toDataURL('image/jpeg', 0.7);
+
+          document.getElementById('kid-photo-preview').src = kidSnappedPhoto;
+          document.getElementById('kid-photo-preview-box').style.display = 'flex';
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function switchDiscoveryCategory(cat, btn) {
+      if (btn) {
+        document.querySelectorAll('#discovery-modal .tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+      const palette = document.getElementById('discovery-palette');
+      palette.innerHTML = '';
+      const items = PRESET_TOPICS[cat] || PRESET_TOPICS['animal'];
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'quick-emoji-item';
+        div.title = item.name;
+        div.innerText = item.icon;
+        div.onclick = () => {
+          document.getElementById('discovery-input').value = item.name;
+          selectedEmoji = item.icon;
+          document.getElementById('current-badge-icon').innerText = selectedEmoji;
+          speakVietnamese(item.name);
+        };
+        palette.appendChild(div);
+      });
+    }
+
+    function handleDiscoveryInput(val) {
+      if (!val) return;
+      const lower = val.toLowerCase();
+      for (const [key, em] of Object.entries(VOICE_EMOJI_DICT)) {
+        if (lower.includes(key)) {
+          selectedEmoji = em;
+          document.getElementById('current-badge-icon').innerText = selectedEmoji;
+          break;
+        }
+      }
+    }
+
+    function toggleVoiceRecording() {
+      const micBtn = document.getElementById('mic-btn');
+      const input = document.getElementById('discovery-input');
+      const tip = document.getElementById('speech-tip');
+
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        input.focus();
+        tip.innerHTML = '👉 <strong>Bé chạm vào ô trên rồi bấm nút Micro trên bàn phím nhé!</strong>';
+        tip.style.color = '#DC2626';
+        return;
+      }
+
+      if (isRecording) {
+        recognition.stop();
+        return;
+      }
+
+      recognition = new SpeechRec();
+      recognition.lang = 'vi-VN';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        isRecording = true;
+        micBtn.classList.add('recording');
+        tip.innerText = 'Đang lắng nghe bé nói... 👂';
+        tip.style.color = '#DC2626';
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        input.value = transcript;
+        handleDiscoveryInput(transcript);
+        tip.innerText = `Đã nghe thấy: "${transcript}"`;
+        tip.style.color = '#15803D';
+      };
+
+      recognition.onerror = () => {
+        input.focus();
+        tip.innerHTML = '👉 Bé hãy chạm vào ô chữ trên và bấm nút Micro trên bàn phím nhé!';
+        tip.style.color = '#DC2626';
+      };
+
+      recognition.onend = () => {
+        isRecording = false;
+        micBtn.classList.remove('recording');
+      };
+
+      recognition.start();
+    }
+
+    function saveKidDiscovery() {
+      const text = document.getElementById('discovery-input').value.trim();
+      if (!text && !kidSnappedPhoto) {
+        alert('Bé hãy chụp ảnh, nói hoặc chạm chọn một hình khám phá nhé!');
+        return;
+      }
+
+      const lessonName = text || 'Món đồ bé vừa chụp';
+      const newLesson = memoryGarden.addLesson(lessonName, `Bài học do bé khám phá`, selectedEmoji, kidSnappedPhoto);
+      closeDiscoveryModal();
+      updateGardenUI();
+
+      sendWS({ type: 'sync_lesson', payload: memoryGarden.lessons });
+
+      speakVietnamese(`Giỏi quá! Bé vừa trồng một hạt mầm ${newLesson.name} vào vườn trí nhớ rồi!`);
+      fireConfetti();
+
+      const quiz = memoryGarden.generateQuiz(newLesson, SAMPLE_QUESTIONS);
+      setTimeout(() => {
+        flashcardView.style.display = 'none';
+        quizView.style.display = 'flex';
+        displayQuestion(quiz, true);
+      }, 1500);
+    }
+
+    // 10. KHU VƯỜN TRÍ NHỚ & ÔN TẬP NGẮT QUÃNG
+    function openGardenModal() {
+      updateGardenUI();
+      document.getElementById('garden-modal').style.display = 'flex';
+    }
+
+    function closeGardenModal() {
+      document.getElementById('garden-modal').style.display = 'none';
+    }
+
+    function updateGardenUI() {
+      const stats = memoryGarden.getGardenStats();
+      document.getElementById('garden-count').innerText = `Vườn (${stats.total})`;
+      document.getElementById('stat-seed').innerText = stats[1];
+      document.getElementById('stat-sprout').innerText = stats[2];
+      document.getElementById('stat-flower').innerText = stats[3];
+      document.getElementById('stat-fruit').innerText = stats[4];
+
+      const dueLessons = memoryGarden.getDueLessons();
+      const dueTitle = document.getElementById('due-title');
+      const dueSub = document.getElementById('due-subtitle');
+
+      if (dueLessons.length > 0) {
+        dueTitle.innerText = `🎁 Hôm nay có ${dueLessons.length} cây cần tưới nước!`;
+        dueSub.innerText = `Bé ôn tập ngắt quãng để cây ra hoa kết trái nhé!`;
+      } else {
+        dueTitle.innerText = `🌟 Khu vườn đều đang tươi tốt!`;
+        dueSub.innerText = `Bé đã ôn hết bài hôm nay rồi, hẹn bé ngày mai nhé!`;
+      }
+
+      const grid = document.getElementById('garden-list-box');
+      grid.innerHTML = '';
+      memoryGarden.lessons.forEach(l => {
+        const stage = STAGE_INFO[l.level || 1];
+        const isDue = (!l.nextReview || l.nextReview <= Date.now());
+        const card = document.createElement('div');
+        card.className = `garden-item-card ${isDue ? 'due' : ''}`;
+
+        let visualHtml = `<span style="font-size: 28px;">${l.icon}</span>`;
+        if (l.photo) {
+          visualHtml = `<img src="${l.photo}" class="photo-preview-mini" alt="${l.name}">`;
+        }
+
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            ${visualHtml}
+            <span class="stage-badge ${stage.stage}">${stage.icon} ${stage.name}</span>
+          </div>
+          <strong style="font-size: 14px; color: #1E293B;">${l.name}</strong>
+          <span style="font-size: 11px; color: ${isDue ? '#D97706' : '#64748B'}; font-weight: ${isDue ? 'bold' : 'normal'};">
+            ${isDue ? '⚡ Cần tưới hôm nay' : 'Đang lớn dần'}
+          </span>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function startSpacedReview() {
+      dueReviewQueue = memoryGarden.getDueLessons();
+      if (dueReviewQueue.length === 0) {
+        dueReviewQueue = memoryGarden.getDueLessons(true);
+      }
+      currentReviewIndex = 0;
+      isSpacedReviewMode = true;
+      closeGardenModal();
+
+      flashcardView.style.display = 'none';
+      quizView.style.display = 'flex';
+
+      const q = memoryGarden.generateQuiz(dueReviewQueue[0], SAMPLE_QUESTIONS);
+      displayQuestion(q, true);
+    }
+
+    function exitSpacedReview() {
+      isSpacedReviewMode = false;
+      spacedBanner.style.display = 'none';
+      if (typeof SAMPLE_QUESTIONS !== 'undefined' && SAMPLE_QUESTIONS.length > 0) {
+        displayQuestion(SAMPLE_QUESTIONS[0], false);
+      }
+    }
+
+    // 11. Khóa Phụ huynh
+    const lockBtn = document.getElementById('lock-btn');
+    const modal = document.getElementById('parental-gate-modal');
+    let gateAnswer = 0;
+
+    lockBtn.onclick = () => {
+      const n1 = Math.floor(Math.random() * 5) + 2;
+      const n2 = Math.floor(Math.random() * 5) + 1;
+      gateAnswer = n1 + n2;
+
+      document.getElementById('math-challenge').innerText = `${n1} + ${n2} = ?`;
+      const opts = [gateAnswer, gateAnswer + 1, gateAnswer - 1].sort(() => Math.random() - 0.5);
+      const mathOptsBox = document.getElementById('math-options');
+      mathOptsBox.innerHTML = '';
+      opts.forEach(ans => {
+        const btn = document.createElement('button');
+        btn.innerText = ans;
+        btn.style.cssText = 'padding: 10px 20px; font-size: 20px; font-weight: bold; background: #4F46E5; color: white; border: none; border-radius: 12px;';
+        btn.onclick = () => {
+          if (ans === gateAnswer) {
+            window.location.href = '/';
+          } else {
+            alert('Chưa đúng kết quả!');
+          }
+        };
+        mathOptsBox.appendChild(btn);
+      });
+      modal.style.display = 'flex';
+    };
+
+    function closeParentalGate() {
+      modal.style.display = 'none';
+    }
+
+    // Khởi động
+    connectWS();
+    updateGardenUI();
+    const allInitLessons = lessonManager.getAllLessons();
+    if (allInitLessons.length > 0) {
+      startLesson(allInitLessons[0]);
+    } else if (typeof SAMPLE_QUESTIONS !== 'undefined' && SAMPLE_QUESTIONS.length > 0) {
+      displayQuestion(SAMPLE_QUESTIONS[0], false);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bé Vui Học - Học Cùng Bố Mẹ</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#4F46E5">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="/icons/icon.svg">
+</head>
+<body>
+  <div class="welcome-container">
+    <div class="app-logo">🌈</div>
+    <h1 class="app-title">Bé Vui Học</h1>
+    <p class="app-subtitle">Học tập tương tác cho Phụ huynh và Nhiều bé cùng lúc (3-4 tuổi)</p>
+
+    <!-- Nút chọn máy Bé -->
+    <a href="/kid.html" class="role-card kid">
+      <div class="role-icon">👶</div>
+      <div class="role-info">
+        <h2>Bé Yêu 🎈 (Có thể mở nhiều bé)</h2>
+        <p>Mỗi bé tự chọn tên & con vật, học thẻ ảnh thật, đố vui thi đua</p>
+      </div>
+    </a>
+
+    <!-- Nút chọn máy Bố Mẹ -->
+    <a href="/parent.html" class="role-card parent">
+      <div class="role-icon">📱</div>
+      <div class="role-info">
+        <h2>Bố Mẹ 👨‍👩‍👧 (Đấu Trường Nhiều Bé)</h2>
+        <p>Bàn điều khiển giao bài, theo dõi trực tiếp & thưởng sao cho từng bé</p>
+      </div>
+    </a>
+
+    <div style="margin-top: auto; padding-top: 20px;">
+      <!-- Nút Cài đặt ứng dụng trên Android -->
+      <button id="install-btn" style="display: none; width: 100%; padding: 14px; background: #059669; color: white; border: none; border-radius: 16px; font-weight: bold; font-size: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(5,150,105,0.3);">
+        📲 Cài đặt ứng dụng vào điện thoại
+      </button>
+
+      <div style="background: white; border-radius: 16px; padding: 14px; font-size: 13px; color: #64748B; border: 1px dashed #CBD5E1;">
+        💡 <strong>Mẹo hay:</strong> 1 máy Bố Mẹ có thể kết nối đồng thời với <strong>nhiều điện thoại / máy tính bảng</strong> của các bé trong nhà cùng bắt Wi-Fi. Bấm nút <strong>"Cài đặt ứng dụng"</strong> hoặc chọn <strong>"Thêm vào Màn hình chính"</strong> trên Chrome để dùng như app Android thật!
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Đăng ký Service Worker cho PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(console.error);
+    }
+
+    // Xử lý sự kiện cài đặt PWA trên Android
+    let deferredPrompt;
+    const installBtn = document.getElementById('install-btn');
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'block';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installBtn.style.display = 'none';
+        }
+        deferredPrompt = null;
+      }
+    });
+  </script>
+</body>
+</html>
