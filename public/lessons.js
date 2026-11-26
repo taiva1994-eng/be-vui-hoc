@@ -651,8 +651,10 @@ class LessonManager {
   constructor() {
     this.STORAGE_KEY = 'be_vui_hoc_custom_lessons_v1';
     this.OVERRIDE_KEY = 'be_vui_hoc_default_overrides_v1';
+    this.DELETED_KEY = 'be_vui_hoc_deleted_lessons_v1';
     this.customLessons = this.loadCustomLessons();
     this.defaultLessonOverrides = this.loadDefaultOverrides();
+    this.deletedLessonIds = this.loadDeletedLessonIds();
   }
 
   loadCustomLessons() {
@@ -689,11 +691,30 @@ class LessonManager {
     }
   }
 
+  loadDeletedLessonIds() {
+    try {
+      const data = localStorage.getItem(this.DELETED_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  saveDeletedLessonIds() {
+    try {
+      localStorage.setItem(this.DELETED_KEY, JSON.stringify(this.deletedLessonIds));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   getAllLessons() {
-    const overriddenDefaults = DEFAULT_LESSONS.map(dl => {
+    const filteredDefaults = DEFAULT_LESSONS.filter(dl => !this.deletedLessonIds.includes(dl.id));
+    const overriddenDefaults = filteredDefaults.map(dl => {
       return this.defaultLessonOverrides[dl.id] ? this.defaultLessonOverrides[dl.id] : dl;
     });
-    return [...this.customLessons, ...overriddenDefaults];
+    const filteredCustoms = this.customLessons.filter(cl => !this.deletedLessonIds.includes(cl.id));
+    return [...filteredCustoms, ...overriddenDefaults];
   }
 
   getLessonById(id) {
@@ -703,6 +724,10 @@ class LessonManager {
   saveLesson(lesson) {
     lesson.quizzes = this.generateQuizzesFromCards(lesson.cards);
     lesson.badge = `${lesson.cards.length} Thẻ`;
+
+    // Nếu bài học từng bị xóa thì gỡ khỏi danh sách xóa
+    this.deletedLessonIds = this.deletedLessonIds.filter(did => did !== lesson.id);
+    this.saveDeletedLessonIds();
 
     // 1. Kiểm tra nếu là custom lesson đã có
     const customIdx = this.customLessons.findIndex(l => l.id === lesson.id);
@@ -733,6 +758,17 @@ class LessonManager {
       delete this.defaultLessonOverrides[id];
       this.saveDefaultOverrides();
     }
+    if (!this.deletedLessonIds.includes(id)) {
+      this.deletedLessonIds.push(id);
+      this.saveDeletedLessonIds();
+    }
+  }
+
+  restoreAllDefaultLessons() {
+    this.deletedLessonIds = [];
+    this.saveDeletedLessonIds();
+    this.defaultLessonOverrides = {};
+    this.saveDefaultOverrides();
   }
 
   addCustomLesson(lesson) {

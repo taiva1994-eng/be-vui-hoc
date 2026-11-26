@@ -209,7 +209,8 @@
       </button>
 
       <!-- Hành động Lưu & Giao -->
-      <div style="display: flex; gap: 8px; flex-shrink: 0;">
+      <div style="display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap;">
+        <button type="button" id="modal-delete-btn" onclick="deleteCurrentEditingLesson()" style="display: none; padding: 11px 14px; border: 1.5px solid #FECACA; background: #FEE2E2; color: #DC2626; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: pointer;">🗑️ Xóa Bài Này</button>
         <button onclick="closeCreateLessonModal()" style="flex: 1; padding: 11px; border: 1px solid #CBD5E1; background: white; border-radius: 12px; font-weight: bold; color: #64748B; cursor: pointer;">Hủy</button>
         <button onclick="saveAndPushNewLesson(false)" style="flex: 1.2; padding: 11px; border: 1.5px solid #4F46E5; background: #EEF2FF; color: #4338CA; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer;">💾 Lưu Lại</button>
         <button onclick="saveAndPushNewLesson(true)" style="flex: 1.5; padding: 11px; border: none; background: #4F46E5; color: white; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);">🚀 Lưu & Giao Ngay</button>
@@ -670,6 +671,36 @@
       // TAB 1: BÀI HỌC CÓ CẤU TRÚC (THẺ HỌC ẢNH THẬT -> BỘ CÂU ĐỐ)
       if (currentCategory === 'lessons') {
         const allLessons = lessonManager.getAllLessons();
+
+        if (allLessons.length === 0) {
+          qListBox.innerHTML = `
+            <div style="text-align: center; padding: 30px 15px; background: white; border-radius: 16px; border: 1.5px dashed #CBD5E1; margin: 10px 0;">
+              <div style="font-size: 32px; margin-bottom: 8px;">📭</div>
+              <div style="font-size: 15px; font-weight: bold; color: #475569; margin-bottom: 6px;">Chưa có bài học nào</div>
+              <div style="font-size: 13px; color: #64748B; margin-bottom: 16px;">Tất cả bài học đã được xóa hoặc chưa tạo bài mới.</div>
+              <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="restoreDefaultLessons()" style="padding: 8px 16px; background: #EEF2FF; color: #4338CA; border: 1.5px solid #C7D2FE; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer;">
+                  🔄 Khôi phục các bài mẫu
+                </button>
+                <button onclick="openCreateLessonModal()" style="padding: 8px 16px; background: #4F46E5; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer;">
+                  ➕ Soạn bài học mới
+                </button>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        if (lessonManager.deletedLessonIds && lessonManager.deletedLessonIds.length > 0) {
+          const restoreBar = document.createElement('div');
+          restoreBar.style.cssText = 'display: flex; justify-content: space-between; align-items: center; background: #FFFBEB; border: 1px solid #FDE68A; padding: 8px 12px; border-radius: 10px; font-size: 12px; color: #92400E; margin-bottom: 10px;';
+          restoreBar.innerHTML = `
+            <span>💡 Có ${lessonManager.deletedLessonIds.length} bài học đã bị xóa.</span>
+            <button onclick="restoreDefaultLessons()" style="background: white; border: 1px solid #F59E0B; color: #B45309; padding: 4px 8px; border-radius: 6px; font-weight: bold; cursor: pointer;">🔄 Khôi phục bài đã xóa</button>
+          `;
+          qListBox.appendChild(restoreBar);
+        }
+
         allLessons.forEach(l => {
           const item = document.createElement('div');
           item.className = 'q-item';
@@ -689,11 +720,6 @@
             `;
           }).join('');
 
-          const isCustom = l.category === 'custom' || l.id.startsWith('lesson_custom_') || l.id.startsWith('ai_');
-          const deleteBtnHtml = isCustom 
-            ? `<button class="delete-lesson-btn" style="background: #FEE2E2; color: #DC2626; border: 1px solid #FECACA; padding: 6px 9px; border-radius: 9px; font-size: 12px; font-weight: 800; cursor: pointer;" title="Xóa bài học này">🗑️</button>` 
-            : '';
-
           item.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
               <div style="flex: 1;">
@@ -707,7 +733,7 @@
                 <button class="edit-lesson-btn" style="background: #EEF2FF; color: #4338CA; border: 1.5px solid #C7D2FE; padding: 6px 10px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap;">
                   ✏️ Sửa / Thêm thẻ
                 </button>
-                ${deleteBtnHtml}
+                <button class="delete-lesson-btn" style="background: #FEE2E2; color: #DC2626; border: 1px solid #FECACA; padding: 6px 9px; border-radius: 9px; font-size: 12px; font-weight: 800; cursor: pointer;" title="Xóa bài học này">🗑️</button>
                 <button class="push-btn" style="background: #4F46E5; white-space: nowrap; padding: 7px 12px;">
                   👉 Giao Bài
                 </button>
@@ -719,9 +745,7 @@
           `;
 
           item.querySelector('.edit-lesson-btn').onclick = () => openEditLessonModal(l.id);
-          if (isCustom) {
-            item.querySelector('.delete-lesson-btn').onclick = () => deleteLessonById(l.id, l.title);
-          }
+          item.querySelector('.delete-lesson-btn').onclick = () => deleteLessonById(l.id, l.title);
           item.querySelector('.push-btn').onclick = () => pushLessonToKid(l);
           qListBox.appendChild(item);
         });
@@ -813,6 +837,9 @@
       document.getElementById('new-lesson-title').value = '';
       document.getElementById('new-lesson-desc').value = '';
 
+      const modalDelBtn = document.getElementById('modal-delete-btn');
+      if (modalDelBtn) modalDelBtn.style.display = 'none';
+
       // Khởi tạo sẵn 3 thẻ mẫu ban đầu
       currentEditorCards = [
         { id: 'c_' + Date.now() + '_1', name: 'Gấu Bông', icon: '🧸', photo: null, audioPrompt: 'Đây là Bạn Gấu Bông êm ái của bé!', exampleText: 'Bạn gấu bông êm ái' },
@@ -835,6 +862,9 @@
       lessonModalTitle.innerText = `✏️ Chỉnh Sửa & Thêm Thẻ: ${lesson.title}`;
       document.getElementById('new-lesson-title').value = lesson.title || '';
       document.getElementById('new-lesson-desc').value = lesson.desc || '';
+
+      const modalDelBtn = document.getElementById('modal-delete-btn');
+      if (modalDelBtn) modalDelBtn.style.display = 'block';
 
       // Sao chép các thẻ hiện tại của bài học để sửa
       currentEditorCards = JSON.parse(JSON.stringify(lesson.cards || []));
@@ -1125,6 +1155,25 @@
       if (confirm(`Bố mẹ có chắc chắn muốn xóa bài học "${lessonTitle}" không?`)) {
         lessonManager.deleteLesson(lessonId);
         renderQuestionList();
+      }
+    }
+
+    function deleteCurrentEditingLesson() {
+      if (!currentEditingLessonId) return;
+      const lesson = lessonManager.getLessonById(currentEditingLessonId);
+      const title = lesson ? lesson.title : 'bài học này';
+      if (confirm(`Bố mẹ có chắc chắn muốn xóa bài học "${title}" không?`)) {
+        lessonManager.deleteLesson(currentEditingLessonId);
+        closeCreateLessonModal();
+        renderQuestionList();
+      }
+    }
+
+    function restoreDefaultLessons() {
+      if (confirm('Bố mẹ có muốn khôi phục lại các bài học mẫu mặc định không?')) {
+        lessonManager.restoreAllDefaultLessons();
+        renderQuestionList();
+        alert('✨ Đã khôi phục thành công các bài học mẫu!');
       }
     }
 
