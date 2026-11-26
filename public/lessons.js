@@ -260,6 +260,181 @@ const DEFAULT_LESSONS = [
   }
 ];
 
+// ================= TỪ ĐIỂN ẢNH THẬT SẮC NÉT & TỰ ĐỘNG TÌM ẢNH TRÊN MẠNG =================
+const SMART_PHOTO_DICTIONARY = {
+  // Động vật
+  'chó': { photo: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop&q=80', icon: '🐶', themeColor: '#D97706', bgLight: '#FFFBEB' },
+  'cún': { photo: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop&q=80', icon: '🐶', themeColor: '#D97706', bgLight: '#FFFBEB' },
+  'mèo': { photo: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&auto=format&fit=crop&q=80', icon: '🐱', themeColor: '#EA580C', bgLight: '#FFF7ED' },
+  'voi': { photo: 'https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=600&auto=format&fit=crop&q=80', icon: '🐘', themeColor: '#475569', bgLight: '#F8FAFC' },
+  'thỏ': { photo: 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600&auto=format&fit=crop&q=80', icon: '🐰', themeColor: '#E11D48', bgLight: '#FFF1F2' },
+  'hổ': { photo: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=600&auto=format&fit=crop&q=80', icon: '🐯', themeColor: '#D97706', bgLight: '#FEF3C7' },
+  'cọp': { photo: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=600&auto=format&fit=crop&q=80', icon: '🐯', themeColor: '#D97706', bgLight: '#FEF3C7' },
+  'sư tử': { photo: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=600&auto=format&fit=crop&q=80', icon: '🦁', themeColor: '#B45309', bgLight: '#FEF3C7' },
+  'khỉ': { photo: 'https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?w=600&auto=format&fit=crop&q=80', icon: '🐵', themeColor: '#78350F', bgLight: '#FEF3C7' },
+  'gấu': { photo: 'https://images.unsplash.com/photo-1589656966895-2f33e7653819?w=600&auto=format&fit=crop&q=80', icon: '🐻', themeColor: '#451A03', bgLight: '#FEF3C7' },
+  'hươu': { photo: 'https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=600&auto=format&fit=crop&q=80', icon: '🦒', themeColor: '#B45309', bgLight: '#FEF3C7' },
+  'panda': { photo: 'https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=600&auto=format&fit=crop&q=80', icon: '🐼', themeColor: '#1E293B', bgLight: '#F1F5F9' },
+  'gà': { photo: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=600&auto=format&fit=crop&q=80', icon: '🐔', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+  'vịt': { photo: 'https://images.unsplash.com/photo-1555844877-626a5757736b?w=600&auto=format&fit=crop&q=80', icon: '🦆', themeColor: '#059669', bgLight: '#ECFDF5' },
+  'chim': { photo: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=600&auto=format&fit=crop&q=80', icon: '🐦', themeColor: '#2563EB', bgLight: '#EFF6FF' },
+  'cá heo': { photo: 'https://images.unsplash.com/photo-1570481662006-a3a1374699e8?w=600&auto=format&fit=crop&q=80', icon: '🐬', themeColor: '#0284C7', bgLight: '#F0F9FF' },
+  'cá voi': { photo: 'https://images.unsplash.com/photo-1568430462989-44163eb1752f?w=600&auto=format&fit=crop&q=80', icon: '🐋', themeColor: '#0369A1', bgLight: '#E0F2FE' },
+  'rùa': { photo: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&auto=format&fit=crop&q=80', icon: '🐢', themeColor: '#15803D', bgLight: '#DCFCE7' },
+  'cua': { photo: 'https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?w=600&auto=format&fit=crop&q=80', icon: '🦀', themeColor: '#E11D48', bgLight: '#FFE4E6' },
+  'cá vàng': { photo: 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=600&auto=format&fit=crop&q=80', icon: '🐠', themeColor: '#EA580C', bgLight: '#FFEDD5' },
+  'ngựa': { photo: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80', icon: '🐴', themeColor: '#78350F', bgLight: '#FEF3C7' },
+  'bò': { photo: 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?w=600&auto=format&fit=crop&q=80', icon: '🐮', themeColor: '#1E293B', bgLight: '#F1F5F9' },
+  'heo': { photo: 'https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=600&auto=format&fit=crop&q=80', icon: '🐷', themeColor: '#DB2777', bgLight: '#FCE7F3' },
+  'lợn': { photo: 'https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=600&auto=format&fit=crop&q=80', icon: '🐷', themeColor: '#DB2777', bgLight: '#FCE7F3' },
+  'cừu': { photo: 'https://images.unsplash.com/photo-1484557052118-f32bd25b45b5?w=600&auto=format&fit=crop&q=80', icon: '🐑', themeColor: '#475569', bgLight: '#F8FAFC' },
+  'bướm': { photo: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=600&auto=format&fit=crop&q=80', icon: '🦋', themeColor: '#7C3AED', bgLight: '#EDE9FE' },
+  'ong': { photo: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=600&auto=format&fit=crop&q=80', icon: '🐝', themeColor: '#D97706', bgLight: '#FEF3C7' },
+  'ếch': { photo: 'https://images.unsplash.com/photo-1550853024-fae8cd4be47f?w=600&auto=format&fit=crop&q=80', icon: '🐸', themeColor: '#15803D', bgLight: '#DCFCE7' },
+
+  // Hoa quả
+  'táo': { photo: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=600&auto=format&fit=crop&q=80', icon: '🍎', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+  'chuối': { photo: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=600&auto=format&fit=crop&q=80', icon: '🍌', themeColor: '#CA8A04', bgLight: '#FEFCE8' },
+  'dưa hấu': { photo: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600&auto=format&fit=crop&q=80', icon: '🍉', themeColor: '#16A34A', bgLight: '#F0FDF4' },
+  'cam': { photo: 'https://images.unsplash.com/photo-1547514701-42782101795e?w=600&auto=format&fit=crop&q=80', icon: '🍊', themeColor: '#EA580C', bgLight: '#FFEDD5' },
+  'dâu tây': { photo: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=600&auto=format&fit=crop&q=80', icon: '🍓', themeColor: '#E11D48', bgLight: '#FFE4E6' },
+  'dâu': { photo: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=600&auto=format&fit=crop&q=80', icon: '🍓', themeColor: '#E11D48', bgLight: '#FFE4E6' },
+  'nho': { photo: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=600&auto=format&fit=crop&q=80', icon: '🍇', themeColor: '#7C3AED', bgLight: '#EDE9FE' },
+  'xoài': { photo: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=600&auto=format&fit=crop&q=80', icon: '🥭', themeColor: '#D97706', bgLight: '#FEF3C7' },
+  'dứa': { photo: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=600&auto=format&fit=crop&q=80', icon: '🍍', themeColor: '#CA8A04', bgLight: '#FEFCE8' },
+  'thơm': { photo: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=600&auto=format&fit=crop&q=80', icon: '🍍', themeColor: '#CA8A04', bgLight: '#FEFCE8' },
+  'khóm': { photo: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=600&auto=format&fit=crop&q=80', icon: '🍍', themeColor: '#CA8A04', bgLight: '#FEFCE8' },
+  'lê': { photo: 'https://images.unsplash.com/photo-1615484477778-ca3b77940c25?w=600&auto=format&fit=crop&q=80', icon: '🍐', themeColor: '#65A30D', bgLight: '#ECFCCB' },
+  'đào': { photo: 'https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=600&auto=format&fit=crop&q=80', icon: '🍑', themeColor: '#F43F5E', bgLight: '#FFE4E6' },
+  'bơ': { photo: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=600&auto=format&fit=crop&q=80', icon: '🥑', themeColor: '#16A34A', bgLight: '#DCFCE7' },
+  'chanh': { photo: 'https://images.unsplash.com/photo-1582979512210-99b6a53386f9?w=600&auto=format&fit=crop&q=80', icon: '🍋', themeColor: '#EAB308', bgLight: '#FEF9C3' },
+
+  // Rau củ
+  'cà rốt': { photo: 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=600&auto=format&fit=crop&q=80', icon: '🥕', themeColor: '#EA580C', bgLight: '#FFEDD5' },
+  'cà chua': { photo: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&auto=format&fit=crop&q=80', icon: '🍅', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+  'ngô': { photo: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=600&auto=format&fit=crop&q=80', icon: '🌽', themeColor: '#CA8A04', bgLight: '#FEFCE8' },
+  'bắp': { photo: 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=600&auto=format&fit=crop&q=80', icon: '🌽', themeColor: '#CA8A04', bgLight: '#FEFCE8' },
+  'bông cải': { photo: 'https://images.unsplash.com/photo-1584270359816-7248f2191599?w=600&auto=format&fit=crop&q=80', icon: '🥦', themeColor: '#16A34A', bgLight: '#DCFCE7' },
+  'súp lơ': { photo: 'https://images.unsplash.com/photo-1584270359816-7248f2191599?w=600&auto=format&fit=crop&q=80', icon: '🥦', themeColor: '#16A34A', bgLight: '#DCFCE7' },
+  'khoai tây': { photo: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&auto=format&fit=crop&q=80', icon: '🥔', themeColor: '#78350F', bgLight: '#FEF3C7' },
+  'bí đỏ': { photo: 'https://images.unsplash.com/photo-1508747703725-719777637510?w=600&auto=format&fit=crop&q=80', icon: '🎃', themeColor: '#EA580C', bgLight: '#FFEDD5' },
+  'nấm': { photo: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80', icon: '🍄', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+
+  // Xe cộ
+  'cứu hỏa': { photo: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop&q=80', icon: '🚒', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+  'xe buýt': { photo: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&auto=format&fit=crop&q=80', icon: '🚌', themeColor: '#2563EB', bgLight: '#EFF6FF' },
+  'máy bay': { photo: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&auto=format&fit=crop&q=80', icon: '✈️', themeColor: '#0284C7', bgLight: '#F0F9FF' },
+  'tàu hỏa': { photo: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=600&auto=format&fit=crop&q=80', icon: '🚂', themeColor: '#1E293B', bgLight: '#F1F5F9' },
+  'xe lửa': { photo: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=600&auto=format&fit=crop&q=80', icon: '🚂', themeColor: '#1E293B', bgLight: '#F1F5F9' },
+  'cảnh sát': { photo: 'https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&auto=format&fit=crop&q=80', icon: '🚓', themeColor: '#1D4ED8', bgLight: '#EFF6FF' },
+  'cứu thương': { photo: 'https://images.unsplash.com/photo-1587745416684-47953f16f02f?w=600&auto=format&fit=crop&q=80', icon: '🚑', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+  'ô tô': { photo: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&auto=format&fit=crop&q=80', icon: '🚗', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+  'xe hơi': { photo: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&auto=format&fit=crop&q=80', icon: '🚗', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+  'xe đạp': { photo: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=600&auto=format&fit=crop&q=80', icon: '🚲', themeColor: '#059669', bgLight: '#ECFDF5' },
+  'xe máy': { photo: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&auto=format&fit=crop&q=80', icon: '🏍️', themeColor: '#EA580C', bgLight: '#FFEDD5' },
+  'tàu thủy': { photo: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&auto=format&fit=crop&q=80', icon: '🚢', themeColor: '#0284C7', bgLight: '#F0F9FF' },
+  'thuyền': { photo: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&auto=format&fit=crop&q=80', icon: '⛵', themeColor: '#0284C7', bgLight: '#F0F9FF' },
+  'trực thăng': { photo: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=600&auto=format&fit=crop&q=80', icon: '🚁', themeColor: '#059669', bgLight: '#ECFDF5' },
+
+  // Đồ dùng & Đồ chơi
+  'gấu bông': { photo: 'https://images.unsplash.com/photo-1559454403-b8fb88521f11?w=600&auto=format&fit=crop&q=80', icon: '🧸', themeColor: '#B45309', bgLight: '#FEF3C7' },
+  'giày': { photo: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80', icon: '👟', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+  'sữa': { photo: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=600&auto=format&fit=crop&q=80', icon: '🍼', themeColor: '#0284C7', bgLight: '#F0F9FF' },
+  'bóng': { photo: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?w=600&auto=format&fit=crop&q=80', icon: '⚽', themeColor: '#1E293B', bgLight: '#F1F5F9' },
+  'sách': { photo: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&auto=format&fit=crop&q=80', icon: '📖', themeColor: '#4F46E5', bgLight: '#EEF2FF' },
+  'ba lô': { photo: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&auto=format&fit=crop&q=80', icon: '🎒', themeColor: '#059669', bgLight: '#ECFDF5' },
+  'cặp': { photo: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&auto=format&fit=crop&q=80', icon: '🎒', themeColor: '#059669', bgLight: '#ECFDF5' },
+  'đồng hồ': { photo: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=600&auto=format&fit=crop&q=80', icon: '⏰', themeColor: '#E11D48', bgLight: '#FFE4E6' },
+  'ô': { photo: 'https://images.unsplash.com/photo-1517400508447-88cca558e457?w=600&auto=format&fit=crop&q=80', icon: '☂️', themeColor: '#E11D48', bgLight: '#FFE4E6' },
+  'dù': { photo: 'https://images.unsplash.com/photo-1517400508447-88cca558e457?w=600&auto=format&fit=crop&q=80', icon: '☂️', themeColor: '#E11D48', bgLight: '#FFE4E6' },
+  'mũ': { photo: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&auto=format&fit=crop&q=80', icon: '🧢', themeColor: '#2563EB', bgLight: '#EFF6FF' },
+  'nón': { photo: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&auto=format&fit=crop&q=80', icon: '🧢', themeColor: '#2563EB', bgLight: '#EFF6FF' },
+  'cốc': { photo: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80', icon: '🥛', themeColor: '#0284C7', bgLight: '#F0F9FF' },
+  'ly': { photo: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80', icon: '🥛', themeColor: '#0284C7', bgLight: '#F0F9FF' },
+  'thìa': { photo: 'https://images.unsplash.com/photo-1619895092538-128341789043?w=600&auto=format&fit=crop&q=80', icon: '🥄', themeColor: '#475569', bgLight: '#F8FAFC' },
+  'muỗng': { photo: 'https://images.unsplash.com/photo-1619895092538-128341789043?w=600&auto=format&fit=crop&q=80', icon: '🥄', themeColor: '#475569', bgLight: '#F8FAFC' },
+  'bàn chải': { photo: 'https://images.unsplash.com/photo-1559563458-527698bf5295?w=600&auto=format&fit=crop&q=80', icon: '🪥', themeColor: '#059669', bgLight: '#ECFDF5' },
+  'bánh sinh nhật': { photo: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&auto=format&fit=crop&q=80', icon: '🎂', themeColor: '#DB2777', bgLight: '#FCE7F3' },
+
+  // Thiên nhiên & Hoa
+  'mặt trời': { photo: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80', icon: '☀️', themeColor: '#EA580C', bgLight: '#FFEDD5' },
+  'mặt trăng': { photo: 'https://images.unsplash.com/photo-1532693322450-2cb5c511067d?w=600&auto=format&fit=crop&q=80', icon: '🌙', themeColor: '#D97706', bgLight: '#FEF3C7' },
+  'ngôi sao': { photo: 'https://images.unsplash.com/photo-1516683037151-9a17603a8dc7?w=600&auto=format&fit=crop&q=80', icon: '⭐', themeColor: '#EAB308', bgLight: '#FEF9C3' },
+  'cầu vồng': { photo: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600&auto=format&fit=crop&q=80', icon: '🌈', themeColor: '#4F46E5', bgLight: '#EEF2FF' },
+  'mưa': { photo: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=600&auto=format&fit=crop&q=80', icon: '🌧️', themeColor: '#0284C7', bgLight: '#F0F9FF' },
+  'hoa hồng': { photo: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80', icon: '🌹', themeColor: '#E11D48', bgLight: '#FFE4E6' },
+  'hướng dương': { photo: 'https://images.unsplash.com/photo-1597848212624-a19eb35e2651?w=600&auto=format&fit=crop&q=80', icon: '🌻', themeColor: '#EAB308', bgLight: '#FEF9C3' },
+  'hoa sen': { photo: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80', icon: '🪷', themeColor: '#DB2777', bgLight: '#FCE7F3' },
+
+  // Màu sắc
+  'màu đỏ': { photo: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=600&auto=format&fit=crop&q=80', icon: '🍓', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+  'màu vàng': { photo: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=600&auto=format&fit=crop&q=80', icon: '🍌', themeColor: '#CA8A04', bgLight: '#FEFCE8' },
+  'xanh dương': { photo: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80', icon: '🌊', themeColor: '#2563EB', bgLight: '#EFF6FF' },
+  'xanh lá': { photo: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=600&auto=format&fit=crop&q=80', icon: '🍃', themeColor: '#16A34A', bgLight: '#DCFCE7' },
+  'màu cam': { photo: 'https://images.unsplash.com/photo-1547514701-42782101795e?w=600&auto=format&fit=crop&q=80', icon: '🍊', themeColor: '#EA580C', bgLight: '#FFEDD5' },
+  'màu tím': { photo: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=600&auto=format&fit=crop&q=80', icon: '🍇', themeColor: '#7C3AED', bgLight: '#EDE9FE' },
+  'màu hồng': { photo: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80', icon: '🌸', themeColor: '#DB2777', bgLight: '#FCE7F3' },
+
+  // Hình khối
+  'hình tròn': { photo: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?w=600&auto=format&fit=crop&q=80', icon: '⚽', themeColor: '#1E293B', bgLight: '#F1F5F9' },
+  'hình vuông': { photo: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&auto=format&fit=crop&q=80', icon: '🎁', themeColor: '#D97706', bgLight: '#FEF3C7' },
+  'hình tam giác': { photo: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=80', icon: '🍕', themeColor: '#EA580C', bgLight: '#FFEDD5' },
+  'trái tim': { photo: 'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=600&auto=format&fit=crop&q=80', icon: '❤️', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+
+  // Cơ thể
+  'mắt': { photo: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&auto=format&fit=crop&q=80', icon: '👀', themeColor: '#0284C7', bgLight: '#F0F9FF' },
+  'tay': { photo: 'https://images.unsplash.com/photo-1516726817505-f5ed825624d8?w=600&auto=format&fit=crop&q=80', icon: '🤲', themeColor: '#D97706', bgLight: '#FEF3C7' },
+  'tai': { photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80', icon: '👂', themeColor: '#EA580C', bgLight: '#FFEDD5' },
+  'chân': { photo: 'https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=600&auto=format&fit=crop&q=80', icon: '🦶', themeColor: '#D97706', bgLight: '#FEF3C7' },
+  'miệng': { photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&auto=format&fit=crop&q=80', icon: '👄', themeColor: '#DC2626', bgLight: '#FEF2F2' },
+  'nụ cười': { photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&auto=format&fit=crop&q=80', icon: '👄', themeColor: '#DC2626', bgLight: '#FEF2F2' }
+};
+
+// Hàm tìm ảnh thông minh: Tra từ điển Unsplash trước, nếu không có thì truy vấn trực tiếp Wikipedia ảnh thật
+async function findSmartPhotoOrOnline(keyword) {
+  if (!keyword) return null;
+  const raw = keyword.toLowerCase().trim();
+
+  // 1. Kiểm tra chính xác hoặc chứa trong kho ảnh Unsplash có sẵn
+  for (const [key, item] of Object.entries(SMART_PHOTO_DICTIONARY)) {
+    if (raw.includes(key) || key.includes(raw)) {
+      return item;
+    }
+  }
+
+  // 2. Làm sạch tiền tố để tìm kiếm Wikipedia mở rộng
+  const cleanWord = raw
+    .replace(/^(con|quả|trái|cây|chiếc|cái|chú|bạn|bông|đôi|loại|bức|hình)\s+/i, '')
+    .trim();
+
+  const queries = [cleanWord, raw];
+  for (const q of queries) {
+    if (!q) continue;
+    try {
+      const url = `https://vi.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(q)}&prop=pageimages&format=json&pithumbsize=600&origin=*`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data && data.query && data.query.pages) {
+        for (const pid in data.query.pages) {
+          const page = data.query.pages[pid];
+          if (page && page.thumbnail && page.thumbnail.source) {
+            return {
+              photo: page.thumbnail.source,
+              icon: '🌟',
+              themeColor: '#4F46E5',
+              bgLight: '#EEF2FF'
+            };
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Wiki photo lookup error for:', q, e);
+    }
+  }
+
+  return null;
+}
+
 // ================= BỘ MÃ NGUỒN TỰ ĐỘNG TẠO BÀI HỌC TỪ CHỦ ĐỀ (AUTO LESSON GENERATOR) =================
 const PRESET_TOPIC_TEMPLATES = {
   // 1. Phương tiện giao thông

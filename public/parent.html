@@ -182,14 +182,19 @@
       </div>
 
       <!-- Tiêu đề danh sách thẻ & Nút thêm nhanh -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-shrink: 0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-shrink: 0; flex-wrap: wrap; gap: 6px;">
         <div style="display: flex; align-items: center; gap: 6px;">
           <label style="font-size: 13px; font-weight: 800; color: #1E3A8A;">Các Thẻ Học Trong Bài:</label>
           <span id="editor-card-count-badge" style="background: #E0E7FF; color: #3730A3; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 10px;">0 Thẻ</span>
         </div>
-        <button type="button" onclick="addNewCardRow()" style="border: none; background: #4F46E5; color: white; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-          ➕ Thêm thẻ
-        </button>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <button type="button" id="btn-fetch-all" onclick="autoFetchAllCards()" style="border: none; background: #059669; color: white; padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px;" title="Tự động tìm kiếm ảnh mạng cho tất cả các thẻ có tên">
+            🌐 Tự lấy ảnh cả bài
+          </button>
+          <button type="button" onclick="addNewCardRow()" style="border: none; background: #4F46E5; color: white; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+            ➕ Thêm thẻ
+          </button>
+        </div>
       </div>
 
       <!-- Danh sách thẻ cuộn mượt mà -->
@@ -915,16 +920,109 @@
             oninput="currentEditorCards[${idx}].audioPrompt = this.value; currentEditorCards[${idx}].exampleText = this.value">
 
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-            <label class="camera-snap-btn" style="padding: 5px 10px; font-size: 12px; margin: 0; background: #059669; border-radius: 8px; cursor: pointer;">
-              <span>📸 Chụp / Chọn ảnh thật</span>
-              <input type="file" accept="image/*" style="display: none;" onchange="handleDynamicCardPhoto(event, ${idx})">
-            </label>
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+              <button type="button" id="btn-fetch-photo-${idx}" onclick="autoFetchCardPhoto(${idx})"
+                style="padding: 5px 11px; font-size: 12px; margin: 0; background: linear-gradient(135deg, #4F46E5, #6366F1); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);"
+                title="Tự động tìm kiếm và gán ảnh thật trên mạng vào thẻ này">
+                <span>🌐 Tự Lấy Ảnh Mạng</span>
+              </button>
+              <label class="camera-snap-btn" style="padding: 5px 11px; font-size: 12px; margin: 0; background: #059669; border-radius: 8px; cursor: pointer;">
+                <span>📸 Tải từ máy</span>
+                <input type="file" accept="image/*" style="display: none;" onchange="handleDynamicCardPhoto(event, ${idx})">
+              </label>
+            </div>
             ${photoPreviewHtml}
           </div>
         `;
 
         newCardsContainer.appendChild(cardBox);
       });
+    }
+
+    async function autoFetchCardPhoto(idx) {
+      const card = currentEditorCards[idx];
+      const name = (card.name || '').trim();
+
+      if (!name) {
+        alert('Bố mẹ vui lòng nhập Tên thẻ trước (ví dụ: Chú Cún, Quả Cam, Xe Cứu Hỏa...) để hệ thống tự tìm ảnh phù hợp nhé!');
+        return;
+      }
+
+      const btn = document.getElementById(`btn-fetch-photo-${idx}`);
+      if (btn) {
+        btn.innerHTML = '⏳ Đang tìm...';
+        btn.disabled = true;
+      }
+
+      try {
+        const result = await findSmartPhotoOrOnline(name);
+        if (result && result.photo) {
+          card.photo = result.photo;
+          if (result.icon && (!card.icon || card.icon === '🌟')) {
+            card.icon = result.icon;
+          }
+          if (result.themeColor) card.themeColor = result.themeColor;
+          if (result.bgLight) card.bgLight = result.bgLight;
+          renderDynamicCards();
+        } else {
+          alert(`Chưa tìm thấy ảnh mạng cho "${name}". Bố mẹ có thể tải ảnh từ máy nhé!`);
+          if (btn) {
+            btn.innerHTML = '<span>🌐 Tự Lấy Ảnh Mạng</span>';
+            btn.disabled = false;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Có lỗi khi tải ảnh. Bố mẹ thử lại nhé!');
+        if (btn) {
+          btn.innerHTML = '<span>🌐 Tự Lấy Ảnh Mạng</span>';
+          btn.disabled = false;
+        }
+      }
+    }
+
+    async function autoFetchAllCards() {
+      const cardsWithNames = currentEditorCards.filter(c => c.name && c.name.trim() !== '');
+      if (cardsWithNames.length === 0) {
+        alert('Bố mẹ hãy điền tên cho các thẻ trước (ví dụ: Chú Cún, Quả Táo, Xe Buýt...), sau đó bấm nút này hệ thống sẽ tự tìm ảnh cho tất cả các thẻ cùng lúc nhé!');
+        return;
+      }
+
+      const btn = document.getElementById('btn-fetch-all');
+      if (btn) {
+        btn.innerHTML = '⏳ Đang lấy ảnh...';
+        btn.disabled = true;
+      }
+
+      let successCount = 0;
+      for (let i = 0; i < currentEditorCards.length; i++) {
+        const card = currentEditorCards[i];
+        const name = (card.name || '').trim();
+        if (name && !card.photo) {
+          try {
+            const res = await findSmartPhotoOrOnline(name);
+            if (res && res.photo) {
+              card.photo = res.photo;
+              if (res.icon && (!card.icon || card.icon === '🌟')) card.icon = res.icon;
+              if (res.themeColor) card.themeColor = res.themeColor;
+              if (res.bgLight) card.bgLight = res.bgLight;
+              successCount++;
+            }
+          } catch (e) {}
+        }
+      }
+
+      renderDynamicCards();
+      if (btn) {
+        btn.innerHTML = '🌐 Tự lấy ảnh cả bài';
+        btn.disabled = false;
+      }
+
+      if (successCount > 0) {
+        alert(`✨ Tuyệt vời! Đã tự động tìm và gán ảnh thật cho ${successCount} thẻ thành công!`);
+      } else {
+        alert('Tất cả các thẻ đã có ảnh hoặc chưa tìm được ảnh mới.');
+      }
     }
 
     function removeCardPhoto(idx) {
