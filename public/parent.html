@@ -10,6 +10,7 @@
   <script src="/questions.js"></script>
   <script src="/spaced_repetition.js"></script>
   <script src="/lessons.js"></script>
+  <script src="/speech_engine.js"></script>
 </head>
 <body style="background: #F8FAFC;">
 
@@ -713,9 +714,10 @@
             if (c.photo) {
               thumb = `<img src="${c.photo}" style="width: 24px; height: 24px; border-radius: 6px; object-fit: cover;">`;
             }
+            const promptAttr = (c.audioPrompt || c.name || '').replace(/"/g, '&quot;');
             return `
-              <span style="display: inline-flex; align-items: center; gap: 6px; background: #F1F5F9; border-radius: 8px; padding: 4px 8px; font-size: 12px; font-weight: bold; color: #334155;">
-                ${thumb} <span>${c.name}</span>
+              <span class="card-chip-preview" data-prompt="${promptAttr}" style="display: inline-flex; align-items: center; gap: 6px; background: #F1F5F9; border-radius: 8px; padding: 4px 8px; font-size: 12px; font-weight: bold; color: #334155; cursor: pointer;" title="Bấm để nghe phát âm (${c.name})">
+                ${thumb} <span>${c.name}</span> <span style="font-size: 10px; opacity: 0.5;">🔊</span>
               </span>
             `;
           }).join('');
@@ -747,6 +749,12 @@
           item.querySelector('.edit-lesson-btn').onclick = () => openEditLessonModal(l.id);
           item.querySelector('.delete-lesson-btn').onclick = () => deleteLessonById(l.id, l.title);
           item.querySelector('.push-btn').onclick = () => pushLessonToKid(l);
+          item.querySelectorAll('.card-chip-preview').forEach(chip => {
+            chip.onclick = (e) => {
+              e.stopPropagation();
+              previewTextAudio(chip.getAttribute('data-prompt'));
+            };
+          });
           qListBox.appendChild(item);
         });
       }
@@ -945,9 +953,16 @@
               oninput="currentEditorCards[${idx}].name = this.value">
           </div>
 
-          <input type="text" value="${card.audioPrompt || card.exampleText || ''}" placeholder="Lời giới thiệu (Điện thoại sẽ tự động đọc tiếng Việt)" 
-            style="width: 100%; padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 12px; outline: none; background: white;"
-            oninput="currentEditorCards[${idx}].audioPrompt = this.value; currentEditorCards[${idx}].exampleText = this.value">
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <input type="text" value="${card.audioPrompt || card.exampleText || ''}" placeholder="Lời giới thiệu (Tự nhận diện tiếng Việt, Anh, Nhật... và phát âm chuẩn)" 
+              style="flex: 1; padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 12px; outline: none; background: white;"
+              oninput="currentEditorCards[${idx}].audioPrompt = this.value; currentEditorCards[${idx}].exampleText = this.value">
+            <button type="button" onclick="previewCardAudio(${idx})" 
+              style="padding: 7px 11px; border: 1.5px solid #C7D2FE; background: #EEF2FF; color: #4338CA; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap;" 
+              title="Bấm để nghe thử phát âm tự động">
+              <span>🔊 Nghe thử</span>
+            </button>
+          </div>
 
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
@@ -1052,6 +1067,26 @@
         alert(`✨ Tuyệt vời! Đã tự động tìm và gán ảnh thật cho ${successCount} thẻ thành công!`);
       } else {
         alert('Tất cả các thẻ đã có ảnh hoặc chưa tìm được ảnh mới.');
+      }
+    }
+
+    function previewCardAudio(idx) {
+      const card = currentEditorCards[idx];
+      if (!card) return;
+      const text = (card.audioPrompt || card.name || '').trim();
+      if (!text) {
+        alert('Bố mẹ hãy nhập Tên thẻ hoặc Lời giới thiệu trước để nghe thử nhé!');
+        return;
+      }
+      if (window.SpeechEngine) {
+        window.SpeechEngine.speakAuto(text);
+      }
+    }
+
+    function previewTextAudio(text) {
+      if (!text) return;
+      if (window.SpeechEngine) {
+        window.SpeechEngine.speakAuto(text);
       }
     }
 

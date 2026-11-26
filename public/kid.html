@@ -10,6 +10,7 @@
   <script src="/questions.js"></script>
   <script src="/spaced_repetition.js"></script>
   <script src="/lessons.js"></script>
+  <script src="/speech_engine.js"></script>
 </head>
 <body class="kid-screen">
   <canvas id="confetti-canvas"></canvas>
@@ -358,16 +359,20 @@
       }
     }
 
-    // 3. Text-To-Speech tiếng Việt
+    // 3. Text-To-Speech Tự Động Nhận Diện Ngôn Ngữ & Phát Âm Chuẩn (Tiếng Việt, Anh, Nhật...)
     function speakVietnamese(text) {
-      if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'vi-VN';
-      utter.rate = 0.85;
-      utter.pitch = 1.1;
-      window.speechSynthesis.speak(utter);
+      if (window.SpeechEngine && typeof window.SpeechEngine.speakAuto === 'function') {
+        window.SpeechEngine.speakAuto(text);
+      } else if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'vi-VN';
+        utter.rate = 0.85;
+        utter.pitch = 1.1;
+        window.speechSynthesis.speak(utter);
+      }
     }
+    const speakAuto = speakVietnamese;
 
     // 4. Hiệu ứng Confetti
     const canvas = document.getElementById('confetti-canvas');

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'be-vui-hoc-v3';
+const CACHE_NAME = 'be-vui-hoc-v4';
 const ASSETS = [
   '/',
   '/index.html',
@@ -8,6 +8,7 @@ const ASSETS = [
   '/questions.js',
   '/spaced_repetition.js',
   '/lessons.js',
+  '/speech_engine.js',
   '/manifest.json',
   '/icons/icon.svg'
 ];
