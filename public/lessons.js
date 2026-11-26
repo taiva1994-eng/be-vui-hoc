@@ -475,7 +475,9 @@ const PRESET_TOPIC_TEMPLATES = {
 class LessonManager {
   constructor() {
     this.STORAGE_KEY = 'be_vui_hoc_custom_lessons_v1';
+    this.OVERRIDE_KEY = 'be_vui_hoc_default_overrides_v1';
     this.customLessons = this.loadCustomLessons();
+    this.defaultLessonOverrides = this.loadDefaultOverrides();
   }
 
   loadCustomLessons() {
@@ -495,17 +497,71 @@ class LessonManager {
     }
   }
 
-  getAllLessons() {
-    return [...DEFAULT_LESSONS, ...this.customLessons];
+  loadDefaultOverrides() {
+    try {
+      const data = localStorage.getItem(this.OVERRIDE_KEY);
+      return data ? JSON.parse(data) : {};
+    } catch (e) {
+      return {};
+    }
   }
 
-  addCustomLesson(lesson) {
-    if (!lesson.quizzes || lesson.quizzes.length === 0) {
-      lesson.quizzes = this.generateQuizzesFromCards(lesson.cards);
+  saveDefaultOverrides() {
+    try {
+      localStorage.setItem(this.OVERRIDE_KEY, JSON.stringify(this.defaultLessonOverrides));
+    } catch (e) {
+      console.error(e);
     }
+  }
+
+  getAllLessons() {
+    const overriddenDefaults = DEFAULT_LESSONS.map(dl => {
+      return this.defaultLessonOverrides[dl.id] ? this.defaultLessonOverrides[dl.id] : dl;
+    });
+    return [...this.customLessons, ...overriddenDefaults];
+  }
+
+  getLessonById(id) {
+    return this.getAllLessons().find(l => l.id === id);
+  }
+
+  saveLesson(lesson) {
+    lesson.quizzes = this.generateQuizzesFromCards(lesson.cards);
+    lesson.badge = `${lesson.cards.length} Thẻ`;
+
+    // 1. Kiểm tra nếu là custom lesson đã có
+    const customIdx = this.customLessons.findIndex(l => l.id === lesson.id);
+    if (customIdx >= 0) {
+      this.customLessons[customIdx] = lesson;
+      this.saveCustomLessons();
+      return lesson;
+    }
+
+    // 2. Kiểm tra nếu là bài học mặc định đang được chỉnh sửa
+    const isDefault = DEFAULT_LESSONS.some(dl => dl.id === lesson.id);
+    if (isDefault) {
+      this.defaultLessonOverrides[lesson.id] = lesson;
+      this.saveDefaultOverrides();
+      return lesson;
+    }
+
+    // 3. Nếu là bài học mới tạo
     this.customLessons.unshift(lesson);
     this.saveCustomLessons();
     return lesson;
+  }
+
+  deleteLesson(id) {
+    this.customLessons = this.customLessons.filter(l => l.id !== id);
+    this.saveCustomLessons();
+    if (this.defaultLessonOverrides[id]) {
+      delete this.defaultLessonOverrides[id];
+      this.saveDefaultOverrides();
+    }
+  }
+
+  addCustomLesson(lesson) {
+    return this.saveLesson(lesson);
   }
 
   // TỰ ĐỘNG TẠO BÀI HỌC HOÀN CHỈNH TỪ CHỦ ĐỀ

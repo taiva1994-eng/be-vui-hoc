@@ -157,70 +157,59 @@
 
   </div>
 
-  <!-- ================= MODAL TỰ SOẠN THỦ CÔNG NẾU MUỐN ================= -->
+  <!-- ================= MODAL TỰ SOẠN & CHỈNH SỬA BÀI HỌC (THÊM THẺ KHÔNG GIỚI HẠN) ================= -->
   <div id="create-lesson-modal" class="discovery-modal-overlay" style="display: none; z-index: 10001;">
-    <div class="discovery-card" style="max-width: 500px; text-align: left;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h3 style="color: #1E3A8A; font-size: 18px; margin: 0;">✏️ Tự Soạn Thẻ Học Thủ Công</h3>
-        <button onclick="closeCreateLessonModal()" style="border: none; background: #F1F5F9; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">✕</button>
+    <div class="discovery-card" style="max-width: 540px; width: 95%; max-height: 90vh; display: flex; flex-direction: column; text-align: left; padding: 20px;">
+      
+      <!-- Modal Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-shrink: 0;">
+        <div>
+          <h3 id="lesson-modal-title" style="color: #1E3A8A; font-size: 18px; margin: 0;">✏️ Soạn / Chỉnh Sửa Bài Học</h3>
+          <div style="font-size: 12px; color: #64748B; margin-top: 2px;">Tự do thêm thẻ học không giới hạn số lượng</div>
+        </div>
+        <button onclick="closeCreateLessonModal()" style="border: none; background: #F1F5F9; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px;">✕</button>
       </div>
 
-      <label style="font-size: 13px; font-weight: bold; color: #334155;">Tên bài học:</label>
-      <input id="new-lesson-title" type="text" placeholder="Ví dụ: Đồ Dùng Quen Thuộc Của Bé" style="width: 100%; padding: 10px; margin: 4px 0 12px; border: 1.5px solid #CBD5E1; border-radius: 10px; font-size: 15px; font-weight: bold;">
-
-      <label style="font-size: 13px; font-weight: bold; color: #334155;">Các Thẻ Học (3 Thẻ):</label>
-      <div id="new-cards-container" style="display: flex; flex-direction: column; gap: 10px; margin: 6px 0 16px;">
-        <!-- Card 1 -->
-        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
-          <div style="display: flex; gap: 8px; margin-bottom: 6px;">
-            <input class="card-icon-input" type="text" value="🧸" style="width: 44px; text-align: center; font-size: 22px; border: 1px solid #CBD5E1; border-radius: 8px;">
-            <input class="card-name-input" type="text" value="Gấu Bông" placeholder="Tên thẻ..." style="flex: 1; padding: 8px; border: 1px solid #CBD5E1; border-radius: 8px; font-weight: bold;">
-          </div>
-          <input class="card-desc-input" type="text" value="Đây là Bạn Gấu Bông êm ái của bé!" placeholder="Lời giới thiệu (Điện thoại sẽ tự động đọc)" style="width: 100%; padding: 8px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 12px; margin-bottom: 6px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <label class="camera-snap-btn" style="padding: 6px 12px; font-size: 12px; margin: 0; background: #059669;">
-              <span>📸 Chụp ảnh thật</span>
-              <input type="file" accept="image/*" capture="environment" style="display: none;" onchange="handleParentCardPhoto(event, 0)">
-            </label>
-            <img id="card-photo-prev-0" class="photo-preview-mini" style="display: none;" src="">
-          </div>
-        </div>
-        <!-- Card 2 -->
-        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
-          <div style="display: flex; gap: 8px; margin-bottom: 6px;">
-            <input class="card-icon-input" type="text" value="👟" style="width: 44px; text-align: center; font-size: 22px; border: 1px solid #CBD5E1; border-radius: 8px;">
-            <input class="card-name-input" type="text" value="Đôi Giày" placeholder="Tên thẻ..." style="flex: 1; padding: 8px; border: 1px solid #CBD5E1; border-radius: 8px; font-weight: bold;">
-          </div>
-          <input class="card-desc-input" type="text" value="Đây là Đôi Giày êm ái để bé đi dạo chơi!" placeholder="Lời giới thiệu..." style="width: 100%; padding: 8px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 12px; margin-bottom: 6px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <label class="camera-snap-btn" style="padding: 6px 12px; font-size: 12px; margin: 0; background: #059669;">
-              <span>📸 Chụp ảnh thật</span>
-              <input type="file" accept="image/*" capture="environment" style="display: none;" onchange="handleParentCardPhoto(event, 1)">
-            </label>
-            <img id="card-photo-prev-1" class="photo-preview-mini" style="display: none;" src="">
-          </div>
-        </div>
-        <!-- Card 3 -->
-        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px;">
-          <div style="display: flex; gap: 8px; margin-bottom: 6px;">
-            <input class="card-icon-input" type="text" value="🍼" style="width: 44px; text-align: center; font-size: 22px; border: 1px solid #CBD5E1; border-radius: 8px;">
-            <input class="card-name-input" type="text" value="Bình Sữa" placeholder="Tên thẻ..." style="flex: 1; padding: 8px; border: 1px solid #CBD5E1; border-radius: 8px; font-weight: bold;">
-          </div>
-          <input class="card-desc-input" type="text" value="Đây là Bình Sữa thơm ngon bổ dưỡng mỗi ngày!" placeholder="Lời giới thiệu..." style="width: 100%; padding: 8px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 12px; margin-bottom: 6px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <label class="camera-snap-btn" style="padding: 6px 12px; font-size: 12px; margin: 0; background: #059669;">
-              <span>📸 Chụp ảnh thật</span>
-              <input type="file" accept="image/*" capture="environment" style="display: none;" onchange="handleParentCardPhoto(event, 2)">
-            </label>
-            <img id="card-photo-prev-2" class="photo-preview-mini" style="display: none;" src="">
-          </div>
-        </div>
+      <!-- Tên & Mô tả bài học -->
+      <div style="flex-shrink: 0; margin-bottom: 8px;">
+        <label style="font-size: 13px; font-weight: bold; color: #334155;">Tên bài học:</label>
+        <input id="new-lesson-title" type="text" placeholder="Ví dụ: Đồ Dùng Quen Thuộc Của Bé" 
+          style="width: 100%; padding: 10px 12px; margin: 4px 0 8px; border: 1.5px solid #CBD5E1; border-radius: 10px; font-size: 15px; font-weight: bold; outline: none;">
+        
+        <label style="font-size: 12px; font-weight: 600; color: #475569;">Mô tả ngắn gọn:</label>
+        <input id="new-lesson-desc" type="text" placeholder="Ví dụ: Bé học nhận biết các đồ vật quen thuộc trong nhà" 
+          style="width: 100%; padding: 8px 12px; margin: 4px 0 10px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 13px; outline: none;">
       </div>
 
-      <div style="display: flex; gap: 10px;">
-        <button onclick="closeCreateLessonModal()" style="flex: 1; padding: 12px; border: 1px solid #CBD5E1; background: white; border-radius: 12px; font-weight: bold; color: #64748B;">Hủy</button>
-        <button onclick="saveAndPushNewLesson()" style="flex: 1.5; padding: 12px; border: none; background: #4F46E5; color: white; border-radius: 12px; font-weight: bold; font-size: 15px;">💾 Lưu & Giao Cho Bé</button>
+      <!-- Tiêu đề danh sách thẻ & Nút thêm nhanh -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 13px; font-weight: 800; color: #1E3A8A;">Các Thẻ Học Trong Bài:</label>
+          <span id="editor-card-count-badge" style="background: #E0E7FF; color: #3730A3; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 10px;">0 Thẻ</span>
+        </div>
+        <button type="button" onclick="addNewCardRow()" style="border: none; background: #4F46E5; color: white; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+          ➕ Thêm thẻ
+        </button>
       </div>
+
+      <!-- Danh sách thẻ cuộn mượt mà -->
+      <div id="new-cards-container" style="flex: 1; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; max-height: 48vh;">
+        <!-- Render động bằng JS -->
+      </div>
+
+      <!-- Nút to thêm thẻ mới ở cuối danh sách -->
+      <button type="button" onclick="addNewCardRow()" 
+        style="width: 100%; padding: 10px; border: 2px dashed #818CF8; background: #EEF2FF; color: #4338CA; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 12px; flex-shrink: 0;">
+        <span>➕ Bấm vào đây để THÊM THẺ MỚI (Tự do, không giới hạn)</span>
+      </button>
+
+      <!-- Hành động Lưu & Giao -->
+      <div style="display: flex; gap: 8px; flex-shrink: 0;">
+        <button onclick="closeCreateLessonModal()" style="flex: 1; padding: 11px; border: 1px solid #CBD5E1; background: white; border-radius: 12px; font-weight: bold; color: #64748B; cursor: pointer;">Hủy</button>
+        <button onclick="saveAndPushNewLesson(false)" style="flex: 1.2; padding: 11px; border: 1.5px solid #4F46E5; background: #EEF2FF; color: #4338CA; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer;">💾 Lưu Lại</button>
+        <button onclick="saveAndPushNewLesson(true)" style="flex: 1.5; padding: 11px; border: none; background: #4F46E5; color: white; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);">🚀 Lưu & Giao Ngay</button>
+      </div>
+
     </div>
   </div>
 
@@ -230,7 +219,8 @@
     let currentActiveLesson = null;
     let score = { correct: 0, total: 0 };
     let currentCategory = 'lessons';
-    const parentCardPhotos = [null, null, null];
+    let currentEditorCards = [];
+    let currentEditingLessonId = null;
 
     // Quản lý danh sách các bé kết nối đồng thời
     const connectedKids = new Map();
@@ -694,24 +684,39 @@
             `;
           }).join('');
 
+          const isCustom = l.category === 'custom' || l.id.startsWith('lesson_custom_') || l.id.startsWith('ai_');
+          const deleteBtnHtml = isCustom 
+            ? `<button class="delete-lesson-btn" style="background: #FEE2E2; color: #DC2626; border: 1px solid #FECACA; padding: 6px 9px; border-radius: 9px; font-size: 12px; font-weight: 800; cursor: pointer;" title="Xóa bài học này">🗑️</button>` 
+            : '';
+
           item.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <div>
-                <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+              <div style="flex: 1;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                   <strong style="font-size: 16px; color: #1E3A8A;">${l.title}</strong>
                   <span style="background: #E0E7FF; color: #3730A3; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 8px;">${l.badge || (l.cards.length + ' Thẻ')}</span>
                 </div>
                 <div style="font-size: 13px; color: #64748B; margin-top: 2px;">${l.desc}</div>
               </div>
-              <button class="push-btn" style="background: #4F46E5; white-space: nowrap;">
-                👉 Giao Bài Học
-              </button>
+              <div style="display: flex; gap: 6px; align-items: center; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end;">
+                <button class="edit-lesson-btn" style="background: #EEF2FF; color: #4338CA; border: 1.5px solid #C7D2FE; padding: 6px 10px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap;">
+                  ✏️ Sửa / Thêm thẻ
+                </button>
+                ${deleteBtnHtml}
+                <button class="push-btn" style="background: #4F46E5; white-space: nowrap; padding: 7px 12px;">
+                  👉 Giao Bài
+                </button>
+              </div>
             </div>
             <div style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px; border-top: 1px dashed #E2E8F0;">
               ${cardsPreviewHtml}
             </div>
           `;
 
+          item.querySelector('.edit-lesson-btn').onclick = () => openEditLessonModal(l.id);
+          if (isCustom) {
+            item.querySelector('.delete-lesson-btn').onclick = () => deleteLessonById(l.id, l.title);
+          }
           item.querySelector('.push-btn').onclick = () => pushLessonToKid(l);
           qListBox.appendChild(item);
         });
@@ -791,8 +796,145 @@
       }
     }
 
-    // 7. Xử lý Chụp ảnh cho từng Thẻ học thủ công
-    function handleParentCardPhoto(event, cardIdx) {
+    // 7. QUẢN LÝ SOẠN & SỬA BÀI HỌC VỚI SỐ LƯỢNG THẺ TỰ DO (KHÔNG GIỚI HẠN)
+    const createLessonModal = document.getElementById('create-lesson-modal');
+    const newCardsContainer = document.getElementById('new-cards-container');
+    const editorCardCountBadge = document.getElementById('editor-card-count-badge');
+    const lessonModalTitle = document.getElementById('lesson-modal-title');
+
+    function openCreateLessonModal() {
+      currentEditingLessonId = null;
+      lessonModalTitle.innerText = '✏️ Tự Soạn Bài Học Mới';
+      document.getElementById('new-lesson-title').value = '';
+      document.getElementById('new-lesson-desc').value = '';
+
+      // Khởi tạo sẵn 3 thẻ mẫu ban đầu
+      currentEditorCards = [
+        { id: 'c_' + Date.now() + '_1', name: 'Gấu Bông', icon: '🧸', photo: null, audioPrompt: 'Đây là Bạn Gấu Bông êm ái của bé!', exampleText: 'Bạn gấu bông êm ái' },
+        { id: 'c_' + Date.now() + '_2', name: 'Đôi Giày', icon: '👟', photo: null, audioPrompt: 'Đây là Đôi Giày êm ái để bé đi dạo chơi!', exampleText: 'Đôi giày xinh xắn' },
+        { id: 'c_' + Date.now() + '_3', name: 'Bình Sữa', icon: '🍼', photo: null, audioPrompt: 'Đây là Bình Sữa thơm ngon bổ dưỡng mỗi ngày!', exampleText: 'Bình sữa thơm ngon' }
+      ];
+
+      renderDynamicCards();
+      createLessonModal.style.display = 'flex';
+    }
+
+    function openEditLessonModal(lessonId) {
+      const lesson = lessonManager.getLessonById(lessonId);
+      if (!lesson) {
+        alert('Không tìm thấy bài học!');
+        return;
+      }
+
+      currentEditingLessonId = lesson.id;
+      lessonModalTitle.innerText = `✏️ Chỉnh Sửa & Thêm Thẻ: ${lesson.title}`;
+      document.getElementById('new-lesson-title').value = lesson.title || '';
+      document.getElementById('new-lesson-desc').value = lesson.desc || '';
+
+      // Sao chép các thẻ hiện tại của bài học để sửa
+      currentEditorCards = JSON.parse(JSON.stringify(lesson.cards || []));
+      if (currentEditorCards.length === 0) {
+        addNewCardRow();
+        addNewCardRow();
+      }
+
+      renderDynamicCards();
+      createLessonModal.style.display = 'flex';
+    }
+
+    function closeCreateLessonModal() {
+      createLessonModal.style.display = 'none';
+      currentEditorCards = [];
+      currentEditingLessonId = null;
+    }
+
+    function addNewCardRow() {
+      currentEditorCards.push({
+        id: 'card_user_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+        name: '',
+        icon: '🌟',
+        photo: null,
+        audioPrompt: '',
+        exampleText: ''
+      });
+      renderDynamicCards();
+
+      // Cuộn mượt mà xuống thẻ vừa thêm
+      setTimeout(() => {
+        newCardsContainer.scrollTop = newCardsContainer.scrollHeight;
+      }, 50);
+    }
+
+    function removeCardRow(index) {
+      if (currentEditorCards.length <= 2) {
+        alert('Mỗi bài học cần tối thiểu 2 thẻ để hệ thống tạo bộ câu đố đố vui cho bé nhé!');
+        return;
+      }
+      currentEditorCards.splice(index, 1);
+      renderDynamicCards();
+    }
+
+    function renderDynamicCards() {
+      newCardsContainer.innerHTML = '';
+      editorCardCountBadge.innerText = `${currentEditorCards.length} Thẻ`;
+
+      currentEditorCards.forEach((card, idx) => {
+        const cardBox = document.createElement('div');
+        cardBox.style.cssText = 'background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px;';
+
+        const photoPreviewHtml = card.photo 
+          ? `<div style="display: flex; align-items: center; gap: 8px;">
+               <img src="${card.photo}" class="photo-preview-mini" style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid #CBD5E1;">
+               <button type="button" onclick="removeCardPhoto(${idx})" style="border: none; background: #FEE2E2; color: #DC2626; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">✕ Bỏ ảnh</button>
+             </div>`
+          : '';
+
+        cardBox.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="background: #4F46E5; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;">${idx + 1}</span>
+              <strong style="font-size: 13px; color: #1E293B;">Thẻ số ${idx + 1}</strong>
+            </div>
+            <button type="button" onclick="removeCardRow(${idx})" title="Xóa thẻ này" 
+              style="border: none; background: #FEE2E2; color: #DC2626; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+              🗑️ Xóa thẻ
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <input type="text" value="${card.icon || '🌟'}" placeholder="Icon" title="Biểu tượng Icon"
+              style="width: 44px; height: 40px; text-align: center; font-size: 20px; border: 1.5px solid #CBD5E1; border-radius: 8px; background: white;"
+              onchange="currentEditorCards[${idx}].icon = this.value">
+            <input type="text" value="${card.name || ''}" placeholder="Tên thẻ (VD: Chú Cún, Quả Táo, Màu Đỏ...)" 
+              style="flex: 1; padding: 8px 12px; border: 1.5px solid #CBD5E1; border-radius: 8px; font-weight: bold; font-size: 14px; outline: none; background: white;"
+              oninput="currentEditorCards[${idx}].name = this.value">
+          </div>
+
+          <input type="text" value="${card.audioPrompt || card.exampleText || ''}" placeholder="Lời giới thiệu (Điện thoại sẽ tự động đọc tiếng Việt)" 
+            style="width: 100%; padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 12px; outline: none; background: white;"
+            oninput="currentEditorCards[${idx}].audioPrompt = this.value; currentEditorCards[${idx}].exampleText = this.value">
+
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+            <label class="camera-snap-btn" style="padding: 5px 10px; font-size: 12px; margin: 0; background: #059669; border-radius: 8px; cursor: pointer;">
+              <span>📸 Chụp / Chọn ảnh thật</span>
+              <input type="file" accept="image/*" style="display: none;" onchange="handleDynamicCardPhoto(event, ${idx})">
+            </label>
+            ${photoPreviewHtml}
+          </div>
+        `;
+
+        newCardsContainer.appendChild(cardBox);
+      });
+    }
+
+    function removeCardPhoto(idx) {
+      if (currentEditorCards[idx]) {
+        currentEditorCards[idx].photo = null;
+        renderDynamicCards();
+      }
+    }
+
+    function handleDynamicCardPhoto(event, cardIdx) {
       const file = event.target.files[0];
       if (!file) return;
 
@@ -801,7 +943,7 @@
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const maxDim = 400;
+          const maxDim = 500;
           let w = img.width;
           let h = img.height;
           if (w > h && w > maxDim) {
@@ -815,67 +957,77 @@
           canvas.height = h;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
 
-          parentCardPhotos[cardIdx] = dataUrl;
-          const prevImg = document.getElementById(`card-photo-prev-${cardIdx}`);
-          prevImg.src = dataUrl;
-          prevImg.style.display = 'block';
+          if (currentEditorCards[cardIdx]) {
+            currentEditorCards[cardIdx].photo = dataUrl;
+            renderDynamicCards();
+          }
         };
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
 
-    // Modal Soạn Bài Học Mới Thủ Công
-    const createLessonModal = document.getElementById('create-lesson-modal');
-    function openCreateLessonModal() { createLessonModal.style.display = 'flex'; }
-    function closeCreateLessonModal() { createLessonModal.style.display = 'none'; }
-
-    function saveAndPushNewLesson() {
+    function saveAndPushNewLesson(shouldPush = false) {
       const title = document.getElementById('new-lesson-title').value.trim();
       if (!title) {
-        alert('Vui lòng nhập tên bài học!');
+        alert('Bố mẹ vui lòng nhập Tên bài học nhé!');
+        document.getElementById('new-lesson-title').focus();
         return;
       }
 
-      const icons = document.querySelectorAll('.card-icon-input');
-      const names = document.querySelectorAll('.card-name-input');
-      const descs = document.querySelectorAll('.card-desc-input');
-
-      const cards = [];
-      for (let i = 0; i < names.length; i++) {
-        const n = names[i].value.trim();
-        if (n) {
-          cards.push({
-            id: 'custom_card_' + Date.now() + '_' + i,
-            name: n,
-            icon: icons[i].value.trim() || '🌟',
-            photo: parentCardPhotos[i] || null,
-            audioPrompt: descs[i].value.trim() || `Đây là ${n}!`,
-            exampleText: descs[i].value.trim() || n
+      // Lọc các thẻ hợp lệ (phải có tên thẻ)
+      const validCards = [];
+      for (let i = 0; i < currentEditorCards.length; i++) {
+        const c = currentEditorCards[i];
+        const name = (c.name || '').trim();
+        if (name) {
+          validCards.push({
+            id: c.id || ('card_' + Date.now() + '_' + i),
+            name: name,
+            icon: (c.icon || '').trim() || '🌟',
+            photo: c.photo || null,
+            audioPrompt: (c.audioPrompt || '').trim() || `Đây là ${name}!`,
+            exampleText: (c.exampleText || c.audioPrompt || '').trim() || name,
+            themeColor: c.themeColor || ['#EF4444', '#F59E0B', '#3B82F6', '#10B981'][i % 4],
+            bgLight: c.bgLight || ['#FEF2F2', '#FFFBEB', '#EFF6FF', '#ECFDF5'][i % 4]
           });
         }
       }
 
-      if (cards.length < 2) {
-        alert('Bài học cần ít nhất 2 thẻ!');
+      if (validCards.length < 2) {
+        alert(`Bài học cần tối thiểu 2 thẻ có tên để hệ thống tạo câu đố thử thách cho bé! Hiện tại chỉ có ${validCards.length} thẻ hợp lệ.`);
         return;
       }
 
-      const newLesson = {
-        id: 'lesson_custom_' + Date.now(),
+      const desc = document.getElementById('new-lesson-desc').value.trim() || `Bài học gồm ${validCards.length} thẻ ảnh thật`;
+      const lessonObj = {
+        id: currentEditingLessonId || ('lesson_custom_' + Date.now()),
         title: title,
         category: 'custom',
-        desc: `Bài học do bố mẹ soạn gồm ${cards.length} thẻ ảnh thật`,
-        badge: `${cards.length} Thẻ`,
-        cards: cards
+        desc: desc,
+        badge: `${validCards.length} Thẻ`,
+        cards: validCards
       };
 
-      lessonManager.addCustomLesson(newLesson);
+      const saved = lessonManager.saveLesson(lessonObj);
       closeCreateLessonModal();
-      pushLessonToKid(newLesson);
       renderQuestionList();
+
+      if (shouldPush) {
+        pushLessonToKid(saved);
+        alert(`✨ Đã lưu bài học "${saved.title}" (${saved.cards.length} thẻ) và phát ngay sang máy của các bé!`);
+      } else {
+        alert(`💾 Đã lưu thành công bài học "${saved.title}" với ${saved.cards.length} thẻ vào danh sách!`);
+      }
+    }
+
+    function deleteLessonById(lessonId, lessonTitle) {
+      if (confirm(`Bố mẹ có chắc chắn muốn xóa bài học "${lessonTitle}" không?`)) {
+        lessonManager.deleteLesson(lessonId);
+        renderQuestionList();
+      }
     }
 
     // Khởi động
